@@ -9,16 +9,18 @@
     <style>
         [x-cloak] { display: none !important; }
     </style>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body class="bg-[#f5efe6] text-[#2c1f16]">
+<body class="font-sans bg-[#f5efe6] text-[#2c1f16]">
 
 <!-- ================= ROOT ================= -->
 <div class="min-h-screen">
 
     <!-- ================= MOBILE ================= -->
     <div class="md:hidden"
-         x-data="{
+        x-data="{
             open:false,
             animating:false,
             toggle() {
@@ -26,7 +28,7 @@
                 this.open = !this.open;
                 smoothExpand(this.$refs.menu, this.open, this);
             }
-         }">
+        }">
 
         <!-- HEADER / MENU -->
         <div class="p-6">
@@ -34,7 +36,9 @@
                         rounded-3xl overflow-hidden shadow-lg">
 
                 <div class="flex items-center justify-between px-4 py-3">
-                    <h1 class="font-semibold text-[#c8a27c]">Kanawa</h1>
+                    <img src="{{ asset('images/logo.png') }}" 
+                    alt="Logo" 
+                    class="h-8 object-contain">
 
                     <button @click="toggle()">
                         <span x-show="!open">☰</span>
@@ -43,7 +47,7 @@
                 </div>
 
                 <div x-ref="menu"
-                     style="height:0; overflow:hidden;">
+                    style="height:0; overflow:hidden;">
 
                     <div class="px-4 pb-4 pt-2 space-y-2">
                         <a href="#" class="block px-3 py-2 rounded-xl hover:bg-white/10">Dashboard</a>
@@ -78,19 +82,30 @@
 
     <!-- ================= DESKTOP ================= -->
     <div class="hidden md:flex h-screen overflow-hidden"
-         x-data="{ collapse:false }">
+        x-data="{ collapse:false }">
 
         <!-- SIDEBAR -->
         <aside
             :class="collapse ? 'w-20' : 'w-64'"
             class="m-4 flex flex-col justify-between rounded-3xl
-                   bg-black/40 backdrop-blur-xl border border-white/10 text-white
-                   shadow-xl transition-all duration-500">
+            bg-black/40 backdrop-blur-xl border border-white/10 text-white
+            shadow-xl transition-all duration-500">
 
             <!-- TOP -->
             <div>
                 <div class="flex items-center justify-between px-4 py-4">
-                    <h1 x-show="!collapse" class="text-[#c8a27c]">Kanawa</h1>
+                    <div class="flex items-center gap-2">
+
+                        <!-- FULL LOGO -->
+                        <img 
+                            x-show="!collapse"
+                            x-transition
+                            src="{{ asset('images/logo.png') }}" 
+                            class="h-10 object-contain"
+                            alt="Logo"
+                        >
+
+                    </div>
 
                     <button @click="collapse = !collapse">
                         ☰
@@ -98,19 +113,26 @@
                 </div>
 
                 <nav class="px-2 space-y-2">
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10">
-                        <span>📊</span>
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0"></i>
                         <span x-show="!collapse">Dashboard</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10">
-                        <span>📦</span>
+
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition">
+                        <i data-lucide="package" class="w-5 h-5"></i>
                         <span x-show="!collapse">Stok</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10">
-                        <span>🏭</span>
+
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition">
+                        <i data-lucide="factory" class="w-5 h-5"></i>
                         <span x-show="!collapse">Produksi</span>
                     </a>
-                </nav>
+
+                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition">
+                        <i data-lucide="truck" class="w-5 h-5"></i>
+                        <span x-show="!collapse">Armada</span>
+                    </a>
+                                    </nav>
             </div>
 
             <!-- BOTTOM -->
@@ -126,8 +148,9 @@
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button class="w-full text-left px-3 py-2 rounded-xl hover:bg-red-500/70 transition text-sm">
-                        Logout
+                    <button class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-red-500/70 transition">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                        <span x-show="!collapse">Logout</span>
                     </button>
                 </form>
 
@@ -145,35 +168,45 @@
 
 <!-- ================= JS ================= -->
 <script>
-function smoothExpand(el, open, ctx) {
-    const duration = 800;
-    const start = el.offsetHeight;
-    const end = open ? el.scrollHeight : 0;
-    const startTime = performance.now();
 
-    function ease(t) {
-        return t < 0.5
-            ? 4*t*t*t
-            : 1 - Math.pow(-2*t + 2, 3)/2;
-    }
+    function smoothExpand(el, open, ctx) {
+        const duration = 800;
+        const start = el.offsetHeight;
+        const end = open ? el.scrollHeight : 0;
+        const startTime = performance.now();
 
-    function frame(time) {
-        const p = Math.min((time - startTime)/duration, 1);
-        const e = ease(p);
-
-        el.style.height = (start + (end-start)*e) + 'px';
-
-        if (p < 1) requestAnimationFrame(frame);
-        else {
-            el.style.height = end + 'px';
-            ctx.animating = false;
+        function ease(t) {
+            return t < 0.5
+                ? 4*t*t*t
+                : 1 - Math.pow(-2*t + 2, 3)/2;
         }
+
+        function frame(time) {
+            const p = Math.min((time - startTime)/duration, 1);
+            const e = ease(p);
+
+            el.style.height = (start + (end-start)*e) + 'px';
+
+            if (p < 1) requestAnimationFrame(frame);
+            else {
+                el.style.height = end + 'px';
+                ctx.animating = false;
+            }
+        }
+
+        ctx.animating = true;
+        requestAnimationFrame(frame);
     }
 
-    ctx.animating = true;
-    requestAnimationFrame(frame);
-}
+    document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+    });
+
+    document.addEventListener("alpine:init", () => {
+        setTimeout(() => lucide.createIcons(), 0);
+    });
 </script>
+
 
 </body>
 </html>
