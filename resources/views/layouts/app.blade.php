@@ -87,70 +87,144 @@
         <!-- SIDEBAR -->
         <aside
             :class="collapse ? 'w-20' : 'w-64'"
-            class="m-4 flex flex-col justify-between rounded-3xl
-            bg-black/40 backdrop-blur-xl border border-white/10 text-white
-            shadow-xl transition-all duration-500">
+            class="m-4 flex flex-col rounded-3xl
+                bg-black/40 backdrop-blur-xl border border-white/10 text-white
+                shadow-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
 
-            <!-- TOP -->
+            <!-- ================= TOP ================= -->
             <div>
-                <div class="flex items-center justify-between px-4 py-4">
-                    <div class="flex items-center gap-2">
 
-                        <!-- FULL LOGO -->
-                        <img 
-                            x-show="!collapse"
-                            x-transition
-                            src="{{ asset('images/logo.png') }}" 
-                            class="h-10 object-contain"
-                            alt="Logo"
-                        >
+                <!-- HEADER -->
+                <div class="relative flex items-center h-12 px-3 mt-3">
 
+                    <!-- LOGO -->
+                    <div 
+                        x-show="!collapse"
+                        x-transition.opacity
+                        class="absolute left-6"
+                    >
+                        <img src="{{ asset('images/logo.png') }}" class="h-10">
                     </div>
 
-                    <button @click="collapse = !collapse">
-                        ☰
+                    <!-- TOGGLE -->
+                    <button 
+                        @click="collapse = !collapse"
+                        class="ml-auto w-12 mr-1 flex justify-center items-center"
+                    >
+                        <i data-lucide="menu" class="w-5 h-5"></i>
                     </button>
+
                 </div>
 
-                <nav class="px-2 space-y-2">
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition">
-                        <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0"></i>
-                        <span x-show="!collapse">Dashboard</span>
+                <!-- MENU -->
+                <nav class="mt-2 space-y-1">
+
+                    <!-- ITEM -->
+                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
+
+                        <div class="w-12 pl-1 flex justify-center items-center">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                        </div>
+
+                        <span 
+                            x-show="!collapse"
+                            x-transition.opacity
+                            class="absolute left-14 whitespace-nowrap"
+                        >
+                            Dashboard
+                        </span>
                     </a>
 
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition">
-                        <i data-lucide="package" class="w-5 h-5"></i>
-                        <span x-show="!collapse">Stok</span>
+                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
+                        <div class="w-12 pl-1 flex justify-center items-center">
+                            <i data-lucide="package" class="w-5 h-5"></i>
+                        </div>
+                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
+                            Stok
+                        </span>
                     </a>
 
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition">
-                        <i data-lucide="factory" class="w-5 h-5"></i>
-                        <span x-show="!collapse">Produksi</span>
+                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
+                        <div class="w-12 pl-1 flex justify-center items-center">
+                            <i data-lucide="factory" class="w-5 h-5"></i>
+                        </div>
+                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
+                            Produksi
+                        </span>
                     </a>
 
-                    <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition">
-                        <i data-lucide="truck" class="w-5 h-5"></i>
-                        <span x-show="!collapse">Armada</span>
+                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
+                        <div class="w-12 pl-1 flex justify-center items-center">
+                            <i data-lucide="truck" class="w-5 h-5"></i>
+                        </div>
+                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
+                            Armada
+                        </span>
                     </a>
-                                    </nav>
+
+                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
+                        <div class="w-12 pl-1 flex justify-center items-center">
+                            <i data-lucide="truck" class="w-5 h-5"></i>
+                        </div>
+                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
+                            Armada
+                        </span>
+                    </a>
+
+                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
+                        <div class="w-12 pl-1 flex justify-center items-center">
+                            <i data-lucide="truck" class="w-5 h-5"></i>
+                        </div>
+                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
+                            Armada
+                        </span>
+                    </a>
+
+                </nav>
             </div>
 
-            <!-- BOTTOM -->
-            <div class="px-3 py-4 border-t border-white/10">
+            <!-- ================= BOTTOM ================= -->
+            <div class="mt-auto px-3 py-4 border-t border-white/10">
 
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-8 h-8 rounded-full bg-[#c8a27c]"></div>
+                {{-- <!-- USER -->
+                <div class="relative flex items-center h-11">
 
-                    <div x-show="!collapse" class="text-sm">
-                        {{ auth()->user()->name }}
+                    <!-- ICON SLOT -->
+                    <div class="w-12 flex justify-center items-center">
+                        <div class="w-8 h-8 rounded-full bg-[#c8a27c]"></div>
                     </div>
-                </div>
 
-                <form method="POST" action="{{ route('logout') }}">
+                    <!-- TEXT -->
+                    <span 
+                        x-show="!collapse"
+                        x-transition.opacity
+                        class="absolute left-14 text-sm whitespace-nowrap"
+                    >
+                        {{ auth()->user()->name }}
+                    </span>
+                </div> --}}
+
+                <!-- LOGOUT -->
+                <form method="POST" action="{{ route('logout') }}" class="mt-2">
                     @csrf
-                    <button class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-red-500/70 transition">
-                        <i data-lucide="log-out" class="w-5 h-5"></i>
-                        <span x-show="!collapse">Logout</span>
+
+                    <button type="submit"
+                        class="relative flex items-center h-11 w-full rounded-xl hover:bg-red-500/70 transition text-left">
+
+                        <!-- ICON SLOT (IDENTIK) -->
+                        <div class="w-12 pl-1 flex justify-center items-center">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </div>
+
+                        <!-- TEXT (IDENTIK) -->
+                        <span 
+                            x-show="!collapse"
+                            x-transition.opacity
+                            class="absolute left-12 whitespace-nowrap"
+                        >
+                            Logout
+                        </span>
+
                     </button>
                 </form>
 
