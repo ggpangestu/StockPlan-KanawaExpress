@@ -7,7 +7,7 @@
     <!-- HEADER -->
     <div>
         <h1 class="text-3xl font-bold text-[#2c1f16]">
-            Dashboard Owner
+            Dashboard produksi
         </h1>
 
         <p class="text-[#5c4432] mt-1">

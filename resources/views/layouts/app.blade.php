@@ -8,6 +8,15 @@
 
     <style>
         [x-cloak] { display: none !important; }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -81,158 +90,264 @@
     </div>
 
     <!-- ================= DESKTOP ================= -->
-    <div class="hidden md:flex h-screen overflow-hidden"
-        x-data="{ collapse:false }">
+    <div
+        x-cloak
+        class="hidden md:block h-screen relative overflow-hidden"
+        x-data="{
+            open: false,
 
-        <!-- SIDEBAR -->
-        <aside
-            :class="collapse ? 'w-20' : 'w-64'"
-            class="m-4 flex flex-col rounded-3xl
-                bg-black/40 backdrop-blur-xl border border-white/10 text-white
-                shadow-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
+            init() {
+                this.open = JSON.parse(
+                    localStorage.getItem('sidebar-open')
+                ) ?? false;
+            },
 
-            <!-- ================= TOP ================= -->
-            <div>
+            toggle() {
+                this.open = !this.open;
 
-                <!-- HEADER -->
-                <div class="relative flex items-center h-12 px-3 mt-3">
+                localStorage.setItem(
+                    'sidebar-open',
+                    JSON.stringify(this.open)
+                );
+            }
+        }"
+    >
 
-                    <!-- LOGO -->
-                    <div 
-                        x-show="!collapse"
-                        x-transition.opacity
-                        class="absolute left-6"
-                    >
-                        <img src="{{ asset('images/logo.png') }}" class="h-10">
+        <!-- ================= FLOATING MENU ================= -->
+        <div
+            class="fixed top-6 left-6 z-50"
+        >
+
+            <!-- MENU CONTAINER -->
+            <div
+                :class="open
+                    ? 'w-48 h-[85vh] rounded-[2rem]'
+                    : 'w-14 h-14 rounded-2xl'
+                "
+                class="overflow-hidden overscroll-none
+                    flex flex-col
+                    bg-black/40 backdrop-blur-xl
+                    border border-white/10
+                    text-white shadow-2xl
+                    transition-[width,height,border-radius]
+                    duration-500
+                    ease-[cubic-bezier(0.22,1,0.36,1)]"
+            >
+
+                <!-- ================= BURGER ================= -->
+                <button
+                    @click="toggle()"
+                    class="w-14 h-14 flex items-center justify-center shrink-0"
+                >
+
+                    <div class="flex flex-col justify-center items-center gap-1.5">
+
+                        <span
+                            :class="open ? 'rotate-45 translate-y-2' : ''"
+                            class="w-6 h-0.5 bg-white rounded transition-all duration-300"
+                        ></span>
+
+                        <span
+                            :class="open ? 'opacity-0' : ''"
+                            class="w-6 h-0.5 bg-white rounded transition-all duration-300"
+                        ></span>
+
+                        <span
+                            :class="open ? '-rotate-45 -translate-y-2' : ''"
+                            class="w-6 h-0.5 bg-white rounded transition-all duration-300"
+                        ></span>
+
                     </div>
 
-                    <!-- TOGGLE -->
-                    <button 
-                        @click="collapse = !collapse"
-                        class="ml-auto w-12 mr-1 flex justify-center items-center"
-                    >
-                        <i data-lucide="menu" class="w-5 h-5"></i>
-                    </button>
+                </button>
+
+                <!-- ================= SIDEBAR CONTENT ================= -->
+                <div
+                    x-show="open"
+                    x-cloak
+                    x-transition.opacity.duration.200ms
+                    class="flex flex-col flex-1 min-h-0"
+                >
+
+                    <!-- ================= MENU ================= -->
+                    <nav class="flex-1 px-3 space-y-1 overflow-y-auto no-scrollbar">
+                        @if(auth()->user()->role === 'owner')
+
+                            <!-- DASHBOARD -->
+                            <a
+                                href="{{ route('dashboard') }}"
+
+                                @class([
+                                    'flex items-center h-11 rounded-xl transition group',
+
+                                    'bg-white/15 shadow-lg text-white'
+                                        => request()->routeIs('dashboard'),
+
+                                    'hover:bg-white/10 text-white/80'
+                                        => !request()->routeIs('dashboard'),
+                                ])
+                            >
+
+                                <div class="w-12 flex justify-center items-center">
+                                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                                </div>
+
+                                <span class="text-sm font-medium">
+                                    Dashboard
+                                </span>
+
+                            </a>
+
+                            <!-- RAW MATERIAL -->
+                            <a
+                                href="{{ route('raw-materials.index') }}"
+
+                                @class([
+                                    'flex items-center h-11 rounded-xl transition group',
+
+                                    'bg-white/15 shadow-lg text-white'
+                                        => request()->routeIs('raw-materials.*'),
+
+                                    'hover:bg-white/10 text-white/80'
+                                        => !request()->routeIs('raw-materials.*'),
+                                ])
+                            >
+
+                                <div class="w-12 flex justify-center items-center">
+                                    <i data-lucide="boxes" class="w-5 h-5"></i>
+                                </div>
+
+                                <span class="text-sm font-medium">
+                                    Raw Material
+                                </span>
+
+                            </a>
+
+                            <!-- MENU -->
+                            <a href="#"
+                                class="flex items-center h-11 rounded-xl
+                                    hover:bg-white/10 transition group"
+                            >
+
+                                <div class="w-12 flex justify-center items-center">
+                                    <i data-lucide="utensils-crossed" class="w-5 h-5"></i>
+                                </div>
+
+                                <span class="text-sm font-medium">
+                                    Menu
+                                </span>
+
+                            </a>
+
+                            <!-- PRODUKSI -->
+                            <a href="#"
+                                class="flex items-center h-11 rounded-xl
+                                    hover:bg-white/10 transition group"
+                            >
+
+                                <div class="w-12 flex justify-center items-center">
+                                    <i data-lucide="factory" class="w-5 h-5"></i>
+                                </div>
+
+                                <span class="text-sm font-medium">
+                                    Produksi
+                                </span>
+
+                            </a>
+
+                            <!-- STOK JADI -->
+                            <a href="#"
+                                class="flex items-center h-11 rounded-xl
+                                    hover:bg-white/10 transition group"
+                            >
+
+                                <div class="w-12 flex justify-center items-center">
+                                    <i data-lucide="package-check" class="w-5 h-5"></i>
+                                </div>
+
+                                <span class="text-sm font-medium">
+                                    Stok Jadi
+                                </span>
+
+                            </a>
+
+                            <!-- ARMADA -->
+                            <a href="#"
+                                class="flex items-center h-11 rounded-xl
+                                    hover:bg-white/10 transition group"
+                            >
+
+                                <div class="w-12 flex justify-center items-center">
+                                    <i data-lucide="truck" class="w-5 h-5"></i>
+                                </div>
+
+                                <span class="text-sm font-medium">
+                                    Armada
+                                </span>
+
+                            </a>
+
+                            <!-- REPORT -->
+                            <a href="#"
+                                class="flex items-center h-11 rounded-xl
+                                    hover:bg-white/10 transition group"
+                            >
+
+                                <div class="w-12 flex justify-center items-center">
+                                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                                </div>
+
+                                <span class="text-sm font-medium">
+                                    Report
+                                </span>
+
+                            </a>
+
+                        @endif
+
+                    </nav>
+
+                    <!-- ================= BOTTOM ================= -->
+                    <div class="p-3 border-t border-white/10">
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+
+                            <button
+                                type="submit"
+                                class="w-full flex items-center h-11 rounded-xl
+                                    hover:bg-red-500/70 transition"
+                            >
+
+                                <div class="w-12 flex justify-center items-center">
+                                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                                </div>
+
+                                <span class="text-sm font-medium">
+                                    Logout
+                                </span>
+
+                            </button>
+
+                        </form>
+
+                    </div>
 
                 </div>
 
-                <!-- MENU -->
-                <nav class="mt-2 space-y-1">
-
-                    <!-- ITEM -->
-                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
-
-                        <div class="w-12 pl-1 flex justify-center items-center">
-                            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                        </div>
-
-                        <span 
-                            x-show="!collapse"
-                            x-transition.opacity
-                            class="absolute left-14 whitespace-nowrap"
-                        >
-                            Dashboard
-                        </span>
-                    </a>
-
-                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
-                        <div class="w-12 pl-1 flex justify-center items-center">
-                            <i data-lucide="package" class="w-5 h-5"></i>
-                        </div>
-                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
-                            Stok
-                        </span>
-                    </a>
-
-                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
-                        <div class="w-12 pl-1 flex justify-center items-center">
-                            <i data-lucide="factory" class="w-5 h-5"></i>
-                        </div>
-                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
-                            Produksi
-                        </span>
-                    </a>
-
-                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
-                        <div class="w-12 pl-1 flex justify-center items-center">
-                            <i data-lucide="truck" class="w-5 h-5"></i>
-                        </div>
-                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
-                            Armada
-                        </span>
-                    </a>
-
-                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
-                        <div class="w-12 pl-1 flex justify-center items-center">
-                            <i data-lucide="truck" class="w-5 h-5"></i>
-                        </div>
-                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
-                            Armada
-                        </span>
-                    </a>
-
-                    <a href="#" class="relative flex items-center h-11 mx-3 rounded-xl hover:bg-white/10 transition">
-                        <div class="w-12 pl-1 flex justify-center items-center">
-                            <i data-lucide="truck" class="w-5 h-5"></i>
-                        </div>
-                        <span x-show="!collapse" x-transition.opacity class="absolute left-14 whitespace-nowrap">
-                            Armada
-                        </span>
-                    </a>
-
-                </nav>
             </div>
 
-            <!-- ================= BOTTOM ================= -->
-            <div class="mt-auto px-3 py-4 border-t border-white/10">
+        </div>
 
-                {{-- <!-- USER -->
-                <div class="relative flex items-center h-11">
-
-                    <!-- ICON SLOT -->
-                    <div class="w-12 flex justify-center items-center">
-                        <div class="w-8 h-8 rounded-full bg-[#c8a27c]"></div>
-                    </div>
-
-                    <!-- TEXT -->
-                    <span 
-                        x-show="!collapse"
-                        x-transition.opacity
-                        class="absolute left-14 text-sm whitespace-nowrap"
-                    >
-                        {{ auth()->user()->name }}
-                    </span>
-                </div> --}}
-
-                <!-- LOGOUT -->
-                <form method="POST" action="{{ route('logout') }}" class="mt-2">
-                    @csrf
-
-                    <button type="submit"
-                        class="relative flex items-center h-11 w-full rounded-xl hover:bg-red-500/70 transition text-left">
-
-                        <!-- ICON SLOT (IDENTIK) -->
-                        <div class="w-12 pl-1 flex justify-center items-center">
-                            <i data-lucide="log-out" class="w-5 h-5"></i>
-                        </div>
-
-                        <!-- TEXT (IDENTIK) -->
-                        <span 
-                            x-show="!collapse"
-                            x-transition.opacity
-                            class="absolute left-12 whitespace-nowrap"
-                        >
-                            Logout
-                        </span>
-
-                    </button>
-                </form>
-
-            </div>
-        </aside>
-
-        <!-- CONTENT -->
-        <main class="flex-1 overflow-y-auto p-6">
+        <!-- ================= CONTENT ================= -->
+        <main
+            :class="open ? 'md:pl-60' : 'md:pl-28'"
+            class="h-screen overflow-y-auto
+                pt-6 pr-6 pb-6
+                md:pt-8 md:pr-8 md:pb-8
+                transition-all duration-500
+                ease-[cubic-bezier(0.22,1,0.36,1)]"
+        >
             @yield('content')
         </main>
 
