@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RawMaterialController;
+use App\Http\Controllers\ProductionController; // 1. Import the controller
 
 Route::get('/', function () {
     return redirect('/login');
@@ -15,6 +16,12 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard');
 
     Route::resource('owner/raw-materials', RawMaterialController::class);
+
+    Route::get('/production', [ProductionController::class, 'index'])
+        ->name('production');
+
+    Route::get('/production/{id}', [ProductionController::class, 'show'])
+        ->name('production.show');
 
 });
 
