@@ -15,6 +15,7 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard');
 
     Route::resource('owner/raw-materials', RawMaterialController::class);
+    Route::get('/owner/armada', function () {return view('owner.kelola-armada');})->name('owner.armada');
 
 });
 
