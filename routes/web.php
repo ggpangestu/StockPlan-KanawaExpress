@@ -14,7 +14,45 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    Route::resource('owner/raw-materials', RawMaterialController::class);
+    //RAW MATERIAL
+    Route::prefix('owner')
+        ->name('owner.')
+        ->middleware('role:owner')
+        ->group(function () {
+
+        Route::resource('raw-materials', RawMaterialController::class);
+
+        Route::get(
+            'raw-materials/{rawMaterial}/restock',
+            [RawMaterialController::class, 'restock']
+        )->name('raw-materials.restock');
+
+        Route::post(
+            'raw-materials/{rawMaterial}/restock',
+            [RawMaterialController::class, 'storeRestock']
+        )->name('raw-materials.store-restock');
+
+        Route::get(
+            'raw-materials/{rawMaterial}/adjustment',
+            [RawMaterialController::class, 'adjustment']
+        )->name('raw-materials.adjustment');
+
+        Route::post(
+            'raw-materials/{rawMaterial}/adjustment',
+            [RawMaterialController::class, 'storeAdjustment']
+        )->name('raw-materials.store-adjustment');
+
+        Route::patch(
+            'raw-material-transactions/{transaction}/price',
+            [RawMaterialController::class, 'updateRestockPrice']
+        )->name('raw-materials.update-restock-price');
+
+        Route::patch(
+            'raw-materials/{rawMaterial}/toggle-active',
+            [RawMaterialController::class, 'toggleActive']
+        )->name('raw-materials.toggle-active');
+        
+    });
 
 });
 
