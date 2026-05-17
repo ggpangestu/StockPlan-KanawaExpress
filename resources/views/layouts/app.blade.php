@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -121,7 +122,7 @@
             <!-- MENU CONTAINER -->
             <div
                 :class="open
-                    ? 'w-48 h-[85vh] rounded-[2rem]'
+                    ? 'w-48 h-[calc(100vh-3rem)] rounded-[2rem]'
                     : 'w-14 h-14 rounded-2xl'
                 "
                 class="overflow-hidden overscroll-none
@@ -200,16 +201,17 @@
 
                             <!-- RAW MATERIAL -->
                             <a
-                                href="{{ route('raw-materials.index') }}"
+                                href="{{ route('owner.raw-materials.index') }}"
 
                                 @class([
                                     'flex items-center h-11 rounded-xl transition group',
 
                                     'bg-white/15 shadow-lg text-white'
-                                        => request()->routeIs('raw-materials.*'),
+                                        => request()->routeIs('owner.raw-materials.*'),
 
                                     'hover:bg-white/10 text-white/80'
-                                        => !request()->routeIs('raw-materials.*'),
+                                        => !request()->routeIs('owner.raw-materials.*'),
+
                                 ])
                             >
 
