@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RawMaterialController;
+use App\Http\Controllers\ProductionController; // 1. Import the controller
 
 Route::get('/', function () {
     return redirect('/login');
@@ -13,7 +14,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
-
+  
     //RAW MATERIAL
     Route::prefix('owner')
         ->name('owner.')
@@ -51,8 +52,16 @@ Route::middleware('auth')->group(function () {
             'raw-materials/{rawMaterial}/toggle-active',
             [RawMaterialController::class, 'toggleActive']
         )->name('raw-materials.toggle-active');
+          
+         Route::get('/owner/armada', function () {return view('owner.kelola-armada');})->name('owner.armada');
         
     });
+
+    Route::get('/production', [ProductionController::class, 'index'])
+        ->name('production');
+
+    Route::get('/production/{id}', [ProductionController::class, 'show'])
+        ->name('production.show');
 
 });
 

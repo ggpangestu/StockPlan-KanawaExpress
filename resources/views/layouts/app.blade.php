@@ -274,9 +274,12 @@
                             </a>
 
                             <!-- ARMADA -->
-                            <a href="#"
-                                class="flex items-center h-11 rounded-xl
-                                    hover:bg-white/10 transition group"
+                            <a href="{{ route('owner.armada') }}"
+                                @class([
+                                'flex items-center h-11 rounded-xl transition group',
+                                'bg-white/15 shadow-lg text-white' => request()->routeIs('owner.armada'),
+                                'hover:bg-white/10 text-white/80' => !request()->routeIs('owner.armada'),
+                                ])
                             >
 
                                 <div class="w-12 flex justify-center items-center">
