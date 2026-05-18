@@ -226,11 +226,13 @@
                             </a>
 
                             <!-- MENU -->
-                            <a href="#"
-                                class="flex items-center h-11 rounded-xl
-                                    hover:bg-white/10 transition group"
+                            <a href="{{ route('owner.menus.index') }}"
+                            @class([
+                                'flex items-center h-11 rounded-xl transition group',
+                                'bg-white/15 shadow-lg text-white' => request()->routeIs('owner.menus.*'),
+                                'hover:bg-white/10 text-white/80' => !request()->routeIs('owner.menus.*'),
+                                ])
                             >
-
                                 <div class="w-12 flex justify-center items-center">
                                     <i data-lucide="utensils-crossed" class="w-5 h-5"></i>
                                 </div>

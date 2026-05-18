@@ -42,6 +42,9 @@ class RawMaterial extends Model
         return $quantity * $this->conversion_value;
     }
 
+    public function menus() { 
+        return $this->belongsToMany(Menu::class, 'menu_raw_material'); }
+
     /*
     |--------------------------------------------------------------------------
     | RELATION
