@@ -2,16 +2,31 @@
 
 @section('content')
 
-<div class="max-w-4xl mx-auto px-4 py-8">
+<div class="space-y-6">
 
     <!-- HEADER -->
     <div class="mb-8">
 
-        <h1 class="text-3xl font-bold text-[#2c1f16]">
+        <a
+            href="{{ route('owner.raw-materials.index') }}"
+            class="inline-flex items-center gap-1
+                text-sm text-[#8a8a8a]
+                hover:text-[#2f2f2f]
+                transition"
+        >
+            <i
+                data-lucide="arrow-left"
+                class="w-5 h-5"
+            ></i>
+
+            Back
+        </a>
+
+        <h1 class="text-3xl mt-3 font-bold text-[#2f2f2f]">
             Edit Raw Material
         </h1>
 
-        <p class="text-[#5c4432] mt-2">
+        <p class="text-[#8a8a8a] mt-2">
             Update material information and inventory configuration.
         </p>
 
@@ -19,6 +34,10 @@
 
     <!-- FORM -->
     <form
+        x-data="{ submitting: false }"
+
+        @submit="submitting = true"
+
         action="{{ route('owner.raw-materials.update', $rawMaterial) }}"
         method="POST"
         enctype="multipart/form-data"
@@ -31,68 +50,79 @@
         <!-- EDITABLE SECTION -->
         <div
             class="bg-white rounded-3xl
-                border border-black/5
+                border border-[#e8e8e5]
                 p-6 space-y-6 shadow-sm"
         >
 
             <!-- SECTION HEADER -->
             <div>
 
-                <h2 class="text-lg font-semibold text-[#2c1f16]">
+                <h2 class="text-lg font-semibold text-[#2f2f2f]">
                     Basic Information
                 </h2>
 
-                <p class="text-sm text-[#5c4432] mt-1">
-                    Main information about the raw material.
+                <p class="text-sm text-[#8a8a8a] mt-1">
+                    Basic information about the raw material.
                 </p>
 
             </div>
 
             <!-- CONTENT -->
             <div
+                x-data="{
+                    preview: '{{ $rawMaterial->image
+                        ? asset('storage/' . $rawMaterial->image)
+                        : '' }}',
+
+                    imageError: '',
+                    fileName: '',
+                }"
+
                 class="grid grid-cols-1
-                    xl:grid-cols-[160px_1fr]
+                    md:grid-cols-[240px_1fr]
                     gap-6"
             >
 
                 <!-- IMAGE -->
-                <div
-                    x-data="{
-                        preview: '{{ $rawMaterial->image
-                            ? asset('storage/' . $rawMaterial->image)
-                            : '' }}'
-                    }"
-                >
+                <div>
 
-                    <label class="block text-sm font-medium text-[#5c4432] mb-2">
+                    <label class="block text-sm font-medium text-[#2f2f2f] mb-2">
                         Material Image
                     </label>
 
                     <!-- PREVIEW -->
                     <div
-                        class="w-36 h-36 rounded-3xl
-                            border border-dashed border-black/10
+                        class="w-full h-[240px]
+                            rounded-3xl
+                            border border-dashed border-[#e8e8e5]
                             bg-black/[0.02]
                             overflow-hidden"
                     >
 
-                        <!-- IMAGE -->
                         <template x-if="preview">
 
                             <img
                                 :src="preview"
+                                alt="Preview"
                                 class="w-full h-full object-cover"
                             >
 
                         </template>
 
-                        <!-- PLACEHOLDER -->
                         <template x-if="!preview">
 
-                            <div class="w-full h-full flex items-center justify-center">
+                            <div
+                                class="w-full h-full
+                                    flex flex-col
+                                    items-center justify-center"
+                            >
 
-                                <span class="text-xs text-[#5c4432] text-center px-3">
-                                    Upload Image
+                                <span class="text-sm text-[#2f2f2f]">
+                                    No Image
+                                </span>
+
+                                <span class="text-xs text-[#8a8a8a] mt-1">
+                                    Preview will appear here
                                 </span>
 
                             </div>
@@ -100,35 +130,6 @@
                         </template>
 
                     </div>
-
-                    <!-- INPUT -->
-                    <input
-                        type="file"
-                        name="image"
-                        accept="image/*"
-
-                        @change="
-                            const file = $event.target.files[0];
-
-                            if (file) {
-                                preview = URL.createObjectURL(file);
-                            }
-                        "
-
-                        class="w-full mt-3 text-sm"
-                    >
-
-                    <p class="text-xs text-[#5c4432] mt-2">
-                        JPG, PNG, WEBP • max 2MB
-                    </p>
-
-                    @error('image')
-
-                        <p class="text-sm text-red-500 mt-2">
-                            {{ $message }}
-                        </p>
-
-                    @enderror
 
                 </div>
 
@@ -138,7 +139,7 @@
                     <!-- NAME -->
                     <div>
 
-                        <label class="text-sm font-medium text-[#5c4432]">
+                        <label class="text-sm font-medium text-[#2f2f2f]">
                             Material Name
                         </label>
 
@@ -146,14 +147,29 @@
                             type="text"
                             name="name"
                             value="{{ old('name', $rawMaterial->name) }}"
-                            class="w-full mt-2 rounded-2xl
-                                border border-black/10
-                                px-4 h-11"
+
+                            @class([
+
+                                'w-full mt-2 rounded-2xl
+                                transition
+                                px-4 h-11
+                                focus:outline-none
+                                focus:ring-2
+                                focus:ring-black/5
+                                focus:border-[#2f2f2f]/10',
+
+                                'border border-rose-300' =>
+                                    $errors->has('name'),
+
+                                'border border-[#e8e8e5]' =>
+                                    !$errors->has('name'),
+
+                            ])
                         >
 
                         @error('name')
 
-                            <p class="text-sm text-red-500 mt-2">
+                            <p class="text-xs text-rose-600 mt-2">
                                 {{ $message }}
                             </p>
 
@@ -164,15 +180,30 @@
                     <!-- CATEGORY -->
                     <div>
 
-                        <label class="text-sm font-medium text-[#5c4432]">
+                        <label class="text-sm font-medium text-[#2f2f2f]">
                             Category
                         </label>
 
                         <select
                             name="category"
-                            class="w-full mt-2 rounded-2xl
-                                border border-black/10
-                                px-4 h-11"
+
+                            @class([
+
+                                'w-full mt-2 rounded-2xl
+                                transition
+                                px-4 h-11
+                                focus:outline-none
+                                focus:ring-2
+                                focus:ring-black/5
+                                focus:border-[#2f2f2f]/10',
+
+                                'border border-rose-300' =>
+                                    $errors->has('category'),
+
+                                'border border-[#e8e8e5]' =>
+                                    !$errors->has('category'),
+
+                            ])
                         >
 
                             <option value="">
@@ -207,11 +238,124 @@
 
                         @error('category')
 
-                            <p class="text-sm text-red-500 mt-2">
+                            <p class="text-xs text-rose-600 mt-2">
                                 {{ $message }}
                             </p>
 
                         @enderror
+
+                    </div>
+
+                    <!-- IMAGE UPLOAD -->
+                    <div>
+
+                        <label class="text-sm font-medium text-[#2f2f2f]">
+                            Material Image
+                        </label>
+
+                        <input
+                            type="file"
+                            name="image"
+                            accept="image/*"
+
+                            @change="
+                                const file = $event.target.files[0];
+
+                                imageError = '';
+
+                                if (!file) return;
+
+                                const allowedTypes = [
+                                    'image/jpeg',
+                                    'image/png',
+                                    'image/webp'
+                                ];
+
+                                if (!allowedTypes.includes(file.type)) {
+
+                                    imageError =
+                                        'Only JPG, PNG, and WEBP images are allowed.';
+
+                                    $event.target.value = '';
+
+                                    return;
+                                }
+
+                                if (file.size > 2097152) {
+
+                                    imageError =
+                                        'Image size must not exceed 2 MB.';
+
+                                    $event.target.value = '';
+
+                                    return;
+                                }
+
+                                if (preview?.startsWith('blob:')) {
+                                    URL.revokeObjectURL(preview);
+                                }
+
+                                preview = URL.createObjectURL(file);
+                            "
+
+                            class="
+                                block w-full mt-2
+
+                                focus:outline-none
+                                focus:ring-0
+                                focus-visible:outline-none
+
+                                text-sm text-[#8a8a8a]
+
+                                file:h-11
+                                file:px-5
+                                file:mr-4
+
+                                file:rounded-2xl
+
+                                file:border
+                                file:border-[#e8e8e5]
+
+                                file:bg-white
+                                file:text-[#2f2f2f]
+
+                                file:text-sm
+                                file:font-medium
+
+                                file:hover:bg-[#f3f3f1]
+
+                                file:cursor-pointer
+
+                                cursor-pointer
+                            "
+                        >
+
+                        <template x-if="imageError">
+
+                            <p
+                                x-text="imageError"
+                                class="text-xs text-rose-600 mt-2"
+                            ></p>
+
+                        </template>
+
+                        <template x-if="!imageError">
+
+                            @if($errors->has('image'))
+
+                                <p class="text-xs text-rose-600 mt-2">
+                                    {{ $errors->first('image') }}
+                                </p>
+
+                            @else
+
+                                <p class="text-xs text-[#8a8a8a] mt-2">
+                                    JPG, JPEG, PNG, WEBP • Maximum 2 MB
+                                </p>
+
+                            @endif
+
+                        </template>
 
                     </div>
 
@@ -224,17 +368,17 @@
         <!-- CONFIGURATION SECTION -->
         <div
             class="bg-white rounded-3xl
-                border border-black/5
+                border border-[#e8e8e5]
                 p-6 space-y-6 mt-6 shadow-sm"
         >
 
             <div>
 
-                <h2 class="text-lg font-semibold text-[#2c1f16]">
+                <h2 class="text-lg font-semibold text-[#2f2f2f]">
                     Inventory Configuration
                 </h2>
 
-                <p class="text-sm text-[#5c4432] mt-1">
+                <p class="text-sm text-[#8a8a8a] mt-1">
                     Unit configuration and stock normalization.
                 </p>
 
@@ -242,16 +386,13 @@
 
                     <div
                         class="mt-4 rounded-2xl
-                            border border-yellow-200
-                            bg-yellow-50
+                            border border-amber-200
+                            bg-amber-50
                             px-4 py-3"
                     >
 
-                        <p class="text-sm text-yellow-800">
-
-                            Inventory configuration is locked because
-                            transactions already exist for this material.
-
+                        <p class="text-sm text-amber-800">
+                            Inventory configuration is locked because transactions already exist for this material, preventing changes that could affect transaction history integrity.
                         </p>
 
                     </div>
@@ -267,7 +408,7 @@
                     <!-- PURCHASE UNIT -->
                     <div>
 
-                        <label class="text-sm font-medium text-[#5c4432]">
+                        <label class="text-sm font-medium text-[#2f2f2f]">
                             Purchase Unit
                         </label>
 
@@ -279,14 +420,17 @@
                             @endif
 
                             class="w-full mt-2 rounded-2xl
-                                border border-black/10
+                                border border-[#e8e8e5]
+                                transition
                                 px-4 h-11
-
-                                @if($hasTransactions)
-                                    bg-black/[0.03]
-                                    text-[#5c4432]
-                                @endif
-                            "
+                                focus:outline-none
+                                focus:ring-2
+                                focus:ring-black/5
+                                focus:border-[#2f2f2f]/10
+                                {{ $hasTransactions
+                                    ? 'bg-black/[0.03] text-[#2f2f2f] cursor-not-allowed select-none'
+                                    : ''
+                                }}"
                         >
 
                             @foreach([
@@ -313,10 +457,14 @@
 
                         </select>
 
+                        <p class="text-xs text-[#8a8a8a] mt-2">
+                            Unit used when purchasing this material.
+                        </p>
+
                     </div>
 
                     <!-- EQUAL -->
-                    <div class="hidden xl:flex pb-3 text-[#5c4432] font-medium">
+                    <div class="hidden xl:flex pb-8 text-[#2f2f2f] font-medium">
 
                         =
 
@@ -325,7 +473,7 @@
                     <!-- CONVERSION VALUE -->
                     <div>
 
-                        <label class="text-sm font-medium text-[#5c4432]">
+                        <label class="text-sm font-medium text-[#2f2f2f]">
                             Quantity / Package
                         </label>
 
@@ -354,21 +502,46 @@
                                 readonly
                             @endif
 
-                            class="w-full mt-2 rounded-2xl
-                                border border-black/10
-                                px-4 h-11
+                            @class([
 
-                                @if($hasTransactions)
-                                    bg-black/[0.03]
-                                    text-[#5c4432]
-                                @endif
-                            "
+                                'w-full mt-2 rounded-2xl
+                                transition
+                                px-4 h-11
+                                focus:outline-none
+                                focus:ring-2
+                                focus:ring-black/5
+                                focus:border-[#2f2f2f]/10',
+
+                                'border border-rose-300' =>
+                                    $errors->has('conversion_value'),
+
+                                'border border-[#e8e8e5]' =>
+                                    !$errors->has('conversion_value'),
+
+                                'bg-black/[0.03] text-[#2f2f2f] cursor-not-allowed select-none' =>
+                                    $hasTransactions,
+
+                            ])
                         >
+
+                        @if($errors->has('conversion_value'))
+
+                            <p class="text-xs text-rose-600 mt-2">
+                                {{ $errors->first('conversion_value') }}
+                            </p>
+
+                        @else
+
+                            <p class="text-xs text-[#8a8a8a] mt-2">
+                                Amount contained in one purchase unit.
+                            </p>
+
+                        @endif
 
                     </div>
 
                     <!-- MULTIPLY -->
-                    <div class="hidden xl:flex pb-3 text-[#5c4432] font-medium">
+                    <div class="hidden xl:flex pb-8 text-[#2f2f2f] font-medium">
 
                         ×
 
@@ -377,7 +550,7 @@
                     <!-- BASE UNIT -->
                     <div>
 
-                        <label class="text-sm font-medium text-[#5c4432]">
+                        <label class="text-sm font-medium text-[#2f2f2f]">
                             Base Unit
                         </label>
 
@@ -389,14 +562,17 @@
                             @endif
 
                             class="w-full mt-2 rounded-2xl
-                                border border-black/10
+                                border border-[#e8e8e5]
+                                transition
                                 px-4 h-11
-
-                                @if($hasTransactions)
-                                    bg-black/[0.03]
-                                    text-[#5c4432]
-                                @endif
-                            "
+                                focus:outline-none
+                                focus:ring-2
+                                focus:ring-black/5
+                                focus:border-[#2f2f2f]/10
+                                {{ $hasTransactions
+                                    ? 'bg-black/[0.03] text-[#2f2f2f] cursor-not-allowed select-none'
+                                    : ''
+                                }}"
                         >
 
                             @foreach([
@@ -422,37 +598,27 @@
 
                         </select>
 
+                        <p class="text-xs text-[#8a8a8a] mt-2">
+                            Smallest unit used for stock tracking.
+                        </p>
+
                     </div>
 
                 </div>
 
-                <p class="text-xs text-[#5c4432] mt-4">
+            </div>
 
-                    Example:
-
-                    @if($hasTransactions)
-
-                        <p class="text-xs text-[#5c4432] mt-2">
-
-                            Configuration fields are locked to preserve
-                            transaction history integrity.
-
-                        </p>
-
-                    @endif
-
-                    1 {{ $rawMaterial->purchase_unit }}
-                    =
-                    {{ number_format(
-                        $rawMaterial->conversion_value,
-                        0,
-                        ',',
-                        '.'
-                    ) }}
-                    {{ $rawMaterial->base_unit }}
-
-                </p>
-
+            <div class="text-xs text-[#8a8a8a] mt-4">
+                Example:
+                1 {{ $rawMaterial->purchase_unit }}
+                =
+                {{ number_format(
+                    $rawMaterial->conversion_value,
+                    0,
+                    ',',
+                    '.'
+                ) }}
+                {{ $rawMaterial->base_unit }}
             </div>
 
         </div>
@@ -460,18 +626,18 @@
         <!-- MONITORING -->
         <div
             class="bg-white rounded-3xl
-                border border-black/5
+                border border-[#e8e8e5]
                 p-6 space-y-6 mt-6 shadow-sm"
         >
 
             <div>
 
-                <h2 class="text-lg font-semibold text-[#2c1f16]">
+                <h2 class="text-lg font-semibold text-[#2f2f2f]">
                     Monitoring
                 </h2>
 
-                <p class="text-sm text-[#5c4432] mt-1">
-                    Used for stock monitoring and inventory alerts.
+                <p class="text-sm text-[#2f2f2f] mt-1">
+                    Set the minimum stock level before this material needs attention.
                 </p>
 
             </div>
@@ -479,7 +645,7 @@
             <!-- MINIMUM STOCK -->
             <div>
 
-                <label class="text-sm font-medium text-[#5c4432]">
+                <label class="text-sm font-medium text-[#2f2f2f]">
                     Minimum Stock
                 </label>
 
@@ -505,21 +671,28 @@
                     ) }}"
 
                     class="w-full mt-2 rounded-2xl
-                        border border-black/10
-                        px-4 h-11"
+                        border border-[#e8e8e5]
+                        transition
+                        px-4 h-11
+                        focus:outline-none
+                        focus:ring-2
+                        focus:ring-black/5
+                        focus:border-[#2f2f2f]/10"
                 >
 
-                <p class="text-xs text-[#5c4432] mt-2">
-                    Minimum stock is measured using the base unit.
-                </p>
+                @if($errors->has('minimum_stock'))
 
-                @error('minimum_stock')
-
-                    <p class="text-sm text-red-500 mt-2">
-                        {{ $message }}
+                    <p class="text-xs text-rose-600 mt-2">
+                        {{ $errors->first('minimum_stock') }}
                     </p>
 
-                @enderror
+                @else
+
+                    <p class="text-xs text-[#8a8a8a] mt-2">
+                        Minimum stock is measured using the base unit.
+                    </p>
+
+                @endif
 
             </div>
 
@@ -532,25 +705,46 @@
                 href="{{ route('owner.raw-materials.index') }}"
                 class="inline-flex items-center justify-center
                     h-11 px-5 rounded-2xl
-                    border border-black/10
-                    bg-white text-[#2c1f16]
+                    border border-[#e8e8e5]
+                    bg-white text-[#2f2f2f]
+                    hover:bg-[#f3f3f1]
                     text-sm font-medium
-                    hover:bg-black/[0.03]
-                    transition"
+                    transition duration-200"
             >
                 Cancel
             </a>
 
             <button
                 type="submit"
+
+                :disabled="submitting"
+
+                :class="{
+                    'opacity-50 cursor-not-allowed hover:opacity-50': submitting
+                }"
+
                 class="inline-flex items-center justify-center
                     h-11 px-5 rounded-2xl
-                    bg-[#2c1f16] text-white
+                    bg-[#2f2f2f] text-white
                     text-sm font-medium
                     hover:opacity-90
-                    transition"
+                    transition duration-200"
             >
-                Update Material
+                <span
+                    x-cloak
+                    x-show="!submitting"
+                    x-transition.opacity
+                >
+                    Update Material
+                </span>
+
+                <span
+                    x-cloak
+                    x-show="submitting"
+                    x-transition.opacity
+                >
+                    Updating...
+                </span>
             </button>
 
         </div>

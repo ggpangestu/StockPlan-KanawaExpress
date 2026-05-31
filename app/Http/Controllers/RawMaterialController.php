@@ -12,7 +12,8 @@ use App\Models\RawMaterialTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
-use  Illuminate\Http\JsonResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 
 class RawMaterialController extends Controller
@@ -30,6 +31,10 @@ class RawMaterialController extends Controller
 
         $filter = $request->get('filter', 'active');
 
+        $search = $request->get('search');
+
+        $attention = $request->get('attention');
+
         /*
         |--------------------------------------------------------------------------
         | QUERY
@@ -45,6 +50,42 @@ class RawMaterialController extends Controller
             }
 
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | SEARCH
+        |--------------------------------------------------------------------------
+        */
+
+        if ($search) {
+
+            $query->where(
+                'name',
+                'like',
+                "%{$search}%"
+            );
+
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | HEALTH ATTENTION FILTER
+        |--------------------------------------------------------------------------
+        */
+
+        if ($attention) {
+
+            $query->where(function ($query) {
+
+                $query
+
+                    ->whereRaw(
+                        '(opened_stock + (sealed_stock * conversion_value)) <= minimum_stock * 1.5'
+                    );
+
+            });
+
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -78,7 +119,9 @@ class RawMaterialController extends Controller
             'owner.raw-materials.index',
             compact(
                 'rawMaterials',
-                'filter'
+                'filter',
+                'search',
+                'attention'
             )
         );
     }
@@ -98,15 +141,29 @@ class RawMaterialController extends Controller
     public function store(Request $request): RedirectResponse
     {
         
-        $validated = $request->validate([
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'name' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'purchase_unit' => 'required|string|max:50',
-            'base_unit' => 'required|string|max:50',
-            'conversion_value' => 'required|numeric|min:1',
-            'minimum_stock' => 'required|numeric|min:0',
-        ]);
+        $validated = $request->validate(
+            [
+
+                'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+                'name' => 'required|string|max:255',
+                'category' => 'required|string|max:255',
+                'purchase_unit' => 'required|string|max:50',
+                'base_unit' => 'required|string|max:50',
+                'conversion_value' => 'required|numeric|min:1',
+                'minimum_stock' => 'required|numeric|min:0',
+
+            ],
+
+            [
+
+                'image.max' =>
+                    'Image size must not exceed 2 MB.',
+
+                'image.image' =>
+                    'Please upload a valid image.',
+
+            ]
+        );
             
         /*
         |--------------------------------------------------------------------------
@@ -148,23 +205,22 @@ class RawMaterialController extends Controller
             
         return redirect()
             ->route('owner.raw-materials.index')
-            ->with('success', 'Raw material created successfully.');
+            ->with('toast', [
+
+                'type' => 'success',
+
+                'title' => 'Material Created',
+
+                'message' =>
+                    'Raw material created successfully.'
+
+            ]);
     }
-
-
-    public function restock(RawMaterial $rawMaterial): View
-    {
-        return view(
-            'owner.raw-materials.restock',
-            compact('rawMaterial')
-        );
-    }
-
 
     public function storeRestock(
         Request $request,
         RawMaterial $rawMaterial
-    ): RedirectResponse
+    ): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
 
@@ -293,7 +349,7 @@ class RawMaterialController extends Controller
 
                 'raw_material_id' => $rawMaterial->id,
 
-                'type' => 'restock',
+                'type' => RawMaterialTransaction::TYPE_RESTOCK,
 
                 'quantity' => $convertedQuantity,
 
@@ -315,9 +371,31 @@ class RawMaterialController extends Controller
 
         });
 
+        if ($request->expectsJson()) {
+
+            return response()->json([
+
+                'success' => true,
+
+                'message' =>
+                    'Restock completed successfully.',
+
+            ]);
+
+        }
+
         return redirect()
             ->route('owner.raw-materials.index')
-            ->with('success', 'Restock completed successfully.');
+            ->with('toast', [
+
+                'type' => 'success',
+
+                'title' => 'Restock Completed',
+
+                'message' =>
+                    'Restock completed successfully.'
+
+            ]);
     }
 
     public function updateRestockPrice(
@@ -331,10 +409,11 @@ class RawMaterialController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($transaction->type !== 'restock') {
-
+        if (
+            $transaction->type
+            !== RawMaterialTransaction::TYPE_RESTOCK
+        ) {
             abort(403);
-
         }
 
         /*
@@ -346,7 +425,7 @@ class RawMaterialController extends Controller
         $validated = $request->validate([
 
             'unit_price' =>
-                'required|numeric|min:0',
+                'required|numeric|gt:0',
 
         ]);
 
@@ -384,42 +463,64 @@ class RawMaterialController extends Controller
 
         ]);
 
-        return back()->with(
-            'success',
-            'Restock price updated successfully.'
-        );
-    }
+        return back()->with('toast', [
 
-    public function adjustment(
-        RawMaterial $rawMaterial
-    ): View
-    {
-        return view(
-            'owner.raw-materials.adjustment',
-            compact('rawMaterial')
-        );
+            'type' => 'success',
+
+            'title' => 'Restock Price Updated',
+
+            'message' =>
+                'Restock price updated successfully.'
+
+        ]);
     }
    
     public function storeAdjustment(
         Request $request,
         RawMaterial $rawMaterial
-    ): RedirectResponse
+    ): RedirectResponse|JsonResponse
     {
-        $validated = $request->validate([
 
-            'type' => [
-                'required',
-                Rule::in([
-                    'adjustment_add',
-                    'adjustment_reduce',
-                ]),
+        $validated = $request->validate(
+
+            [
+
+                'type' => [
+                    'required',
+                    Rule::in([
+                        RawMaterialTransaction::TYPE_ADJUSTMENT_ADD,
+                        RawMaterialTransaction::TYPE_ADJUSTMENT_REDUCE,
+                    ]),
+                ],
+
+                'quantity' => [
+                    'required',
+                    'numeric',
+                    'min:0.01',
+                ],
+
+                'notes' => [
+                    'nullable',
+                    'string',
+                    'max:1000',
+                ],
+
             ],
 
-            'quantity' => 'required|numeric|min:0.01',
+            [
 
-            'notes' => 'nullable|string|max:1000',
+                'quantity.required' =>
+                    'Quantity is required.',
 
-        ]);
+                'quantity.numeric' =>
+                    'Enter a valid quantity.',
+
+                'quantity.min' =>
+                    'Quantity must be greater than 0.',
+
+            ]
+
+        );
 
         DB::transaction(function () use (
             $validated,
@@ -448,7 +549,10 @@ class RawMaterialController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            if ($validated['type'] === 'adjustment_add') {
+            if (
+                $validated['type']
+                === RawMaterialTransaction::TYPE_ADJUSTMENT_ADD
+            ) {
 
                 $rawMaterial->opened_stock += $quantity;
 
@@ -514,12 +618,33 @@ class RawMaterialController extends Controller
             ]);
         });
 
+        if ($request->expectsJson()) {
+
+            return response()->json([
+
+                'success' => true,
+
+                'message' =>
+                    'Stock adjusted successfully.',
+
+            ]);
+
+        }
+
+
+
         return redirect()
             ->route('owner.raw-materials.index')
-            ->with(
-                'success',
-                'Stock adjustment completed successfully.'
-            );
+            ->with('toast', [
+
+                'type' => 'success',
+
+                'title' => 'Stock Adjusted',
+
+                'message' =>
+                    'Stock adjusted successfully.'
+
+            ]);
     }
 
     public function toggleActive(
@@ -585,11 +710,20 @@ class RawMaterialController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDATION
+        | CONFIGURATION FIELDS
         |--------------------------------------------------------------------------
         */
 
-        $validated = $request->validate([
+        $hasTransactions =
+            $rawMaterial->transactions()->exists();
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDATION RULES
+        |--------------------------------------------------------------------------
+        */
+
+        $rules = [
 
             'name' => [
                 'required',
@@ -614,34 +748,44 @@ class RawMaterialController extends Controller
                 'image',
                 'max:2048',
             ],
-        ]);
+
+        ];
 
         /*
         |--------------------------------------------------------------------------
-        | CONFIGURATION FIELDS
-        |--------------------------------------------------------------------------
-        */
-
-        $hasTransactions =
-            $rawMaterial->transactions()->exists();
-
-        /*
-        |--------------------------------------------------------------------------
-        | ALLOW CONFIG UPDATE
+        | CONFIGURATION VALIDATION
         |--------------------------------------------------------------------------
         */
 
         if (!$hasTransactions) {
 
-            $validated['base_unit'] =
-                $request->base_unit;
+            $rules['purchase_unit'] = [
+                'required',
+                'string',
+                'max:50',
+            ];
 
-            $validated['purchase_unit'] =
-                $request->purchase_unit;
+            $rules['base_unit'] = [
+                'required',
+                'string',
+                'max:50',
+            ];
 
-            $validated['conversion_value'] =
-                $request->conversion_value;
+            $rules['conversion_value'] = [
+                'required',
+                'numeric',
+                'min:0.01',
+            ];
+
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDATE
+        |--------------------------------------------------------------------------
+        */
+
+        $validated = $request->validate($rules);
 
         /*
         |--------------------------------------------------------------------------
@@ -650,6 +794,14 @@ class RawMaterialController extends Controller
         */
 
         if ($request->hasFile('image')) {
+
+            if ($rawMaterial->image) {
+
+                Storage::disk('public')->delete(
+                    $rawMaterial->image
+                );
+
+            }
 
             $validated['image'] =
                 $request->file('image')
@@ -669,10 +821,16 @@ class RawMaterialController extends Controller
 
         return redirect()
             ->route('owner.raw-materials.index')
-            ->with(
-                'success',
-                'Raw material updated successfully.'
-            );
+            ->with('toast', [
+
+                'type' => 'success',
+
+                'title' => 'Material Updated',
+
+                'message' =>
+                    'Raw material updated successfully.'
+
+            ]);
     }
 
     /**
