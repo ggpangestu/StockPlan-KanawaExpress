@@ -24,20 +24,10 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('raw-materials', RawMaterialController::class);
 
-        Route::get(
-            'raw-materials/{rawMaterial}/restock',
-            [RawMaterialController::class, 'restock']
-        )->name('raw-materials.restock');
-
         Route::post(
             'raw-materials/{rawMaterial}/restock',
             [RawMaterialController::class, 'storeRestock']
         )->name('raw-materials.store-restock');
-
-        Route::get(
-            'raw-materials/{rawMaterial}/adjustment',
-            [RawMaterialController::class, 'adjustment']
-        )->name('raw-materials.adjustment');
 
         Route::post(
             'raw-materials/{rawMaterial}/adjustment',
@@ -53,7 +43,6 @@ Route::middleware('auth')->group(function () {
             'raw-materials/{rawMaterial}/toggle-active',
             [RawMaterialController::class, 'toggleActive']
         )->name('raw-materials.toggle-active');
-
         
         // MENUS
         Route::resource('menus', MenuController::class);
