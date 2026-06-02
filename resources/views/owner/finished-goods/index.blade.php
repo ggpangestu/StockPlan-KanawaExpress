@@ -5,15 +5,15 @@
 
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-[#2c1f16]">Stok Jadi (Etalase)</h1>
+            <h1 class="text-3xl font-bold text-[#2c1f16]">Stok Jadi</h1>
             <p class="text-[#5c4432] mt-1">Pantau produk yang siap didistribusikan dan masa simpannya.</p>
         </div>
         <div class="flex items-center gap-3">
             <form method="GET">
                 <select name="filter" onchange="this.form.submit()" class="h-11 rounded-2xl border border-black/10 bg-white px-4 text-sm text-[#2c1f16] shadow-sm font-medium focus:ring-[#7b4a24] focus:border-[#7b4a24]">
-                    <option value="available" {{ $filter === 'available' ? 'selected' : '' }}>Tersedia (Ready)</option>
+                    <option value="available" {{ $filter === 'available' ? 'selected' : '' }}>Ready</option>
                     <option value="empty" {{ $filter === 'empty' ? 'selected' : '' }}>Habis Terjual</option>
-                    <option value="expired" {{ $filter === 'expired' ? 'selected' : '' }}>Kedaluwarsa (Basi)</option>
+                    <option value="expired" {{ $filter === 'expired' ? 'selected' : '' }}>Expired</option>
                 </select>
             </form>
         </div>
@@ -58,7 +58,7 @@
                     <tr class="bg-black/[0.02] border-b border-black/5">
                         <th class="py-4 px-6 text-xs font-bold text-[#8a8a8a] uppercase tracking-wider">Produk & Batch</th>
                         <th class="py-4 px-6 text-xs font-bold text-[#8a8a8a] uppercase tracking-wider">Tgl Produksi</th>
-                        <th class="py-4 px-6 text-xs font-bold text-[#8a8a8a] uppercase tracking-wider">Kedaluwarsa</th>
+                        <th class="py-4 px-6 text-xs font-bold text-[#8a8a8a] uppercase tracking-wider">Kedaluarsa</th>
                         <th class="py-4 px-6 text-xs font-bold text-[#8a8a8a] uppercase tracking-wider text-right">Sisa Stok</th>
                         <th class="py-4 px-6 text-xs font-bold text-[#8a8a8a] uppercase tracking-wider text-center">Status</th>
                     </tr>
