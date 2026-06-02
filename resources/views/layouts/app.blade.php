@@ -260,7 +260,7 @@
                             </a>
 
                             <!-- PRODUKSI -->
-                            <a href="#"
+                            <a href="{{ route('owner.productions.index') }}"
                                 class="flex items-center h-11 rounded-xl
                                     hover:bg-white/[0.06] transition group"
                             >
