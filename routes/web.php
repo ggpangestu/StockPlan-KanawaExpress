@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RawMaterialController;
 use App\Http\Controllers\ProductionController; // 1. Import the controller
+use App\Http\Controllers\MenuController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -23,20 +24,10 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('raw-materials', RawMaterialController::class);
 
-        Route::get(
-            'raw-materials/{rawMaterial}/restock',
-            [RawMaterialController::class, 'restock']
-        )->name('raw-materials.restock');
-
         Route::post(
             'raw-materials/{rawMaterial}/restock',
             [RawMaterialController::class, 'storeRestock']
         )->name('raw-materials.store-restock');
-
-        Route::get(
-            'raw-materials/{rawMaterial}/adjustment',
-            [RawMaterialController::class, 'adjustment']
-        )->name('raw-materials.adjustment');
 
         Route::post(
             'raw-materials/{rawMaterial}/adjustment',
@@ -52,11 +43,19 @@ Route::middleware('auth')->group(function () {
             'raw-materials/{rawMaterial}/toggle-active',
             [RawMaterialController::class, 'toggleActive']
         )->name('raw-materials.toggle-active');
-          
         
-        });
+        // MENUS
+        Route::resource('menus', MenuController::class);
+        Route::patch(
+            'menus/{menu}/toggle-active', 
+            [MenuController::class, 'toggleActive']
+            )->name('menus.toggle-active');
+
+        
+    });
+
     Route::get('/owner/armada', function () {return view('owner.kelola-armada');})->name('owner.armada');
-        
+
     Route::get('/production', [ProductionController::class, 'index'])
         ->name('production');
 
