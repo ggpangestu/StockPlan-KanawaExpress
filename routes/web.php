@@ -4,9 +4,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RawMaterialController;
-use App\Http\Controllers\ProductionController; // 1. Import the controller
+use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ArmadaController;
+use App\Http\Controllers\Owner\ProductionController as OwnerProductionController;
+use App\Http\Controllers\Owner\FinishedGoodController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -52,17 +54,32 @@ Route::middleware('auth')->group(function () {
             [MenuController::class, 'toggleActive']
             )->name('menus.toggle-active');
 
+        // PRODUCTIONS
+        Route::resource('productions', OwnerProductionController::class);
+
+        // STOK JADI (FINISHED GOODS)
+        Route::get('stok-jadi', [FinishedGoodController::class, 'index'])->name('stok-jadi.index');
         
         // ARMADA
         Route::resource('armada', ArmadaController::class);
 
     });
 
-    Route::get('/production', [ProductionController::class, 'index'])
-        ->name('production');
-
-    Route::get('/production/{id}', [ProductionController::class, 'show'])
-        ->name('production.show');
+    
+    // ROUTE UNTUK TIM DAPUR / PRODUKSI
+    Route::prefix('produksi')
+    ->name('produksi.')
+    ->middleware('role:produksi') // Aktifkan nanti jika role sudah siap
+    ->group(function () {
+        
+        // Memakai ProductionController murni (Milik Dapur)
+        Route::get('productions', [ProductionController::class, 'index'])->name('productions.index');
+        Route::get('productions/{production}', [ProductionController::class, 'show'])->name('productions.show');
+        
+        // Action Buttons
+        Route::patch('productions/{production}/start', [ProductionController::class, 'start'])->name('productions.start');
+        Route::post('productions/{production}/complete', [ProductionController::class, 'complete'])->name('productions.complete');
+    });
 
 });
 

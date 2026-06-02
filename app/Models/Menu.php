@@ -13,7 +13,8 @@ class Menu extends Model
         'image',
         'description',
         'is_active',
-        'created_by'
+        'created_by',
+        'expires_in_days'
     ];
 
     // Relasi ke Raw Materials (Ingredients)

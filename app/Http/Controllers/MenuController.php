@@ -83,6 +83,7 @@ class MenuController extends Controller
             'ingredients' => 'required|array|min:1',
             'ingredients.*.raw_material_id' => 'required|exists:raw_materials,id',
             'ingredients.*.quantity' => 'required|numeric|min:0.01',
+            'expires_in_days' => 'required|integer|min:1',
         ]);
 
         DB::transaction(function () use ($validated, $request) {
@@ -123,6 +124,7 @@ class MenuController extends Controller
             'ingredients' => 'required|array|min:1',
             'ingredients.*.raw_material_id' => 'required|exists:raw_materials,id',
             'ingredients.*.quantity' => 'required|numeric|min:0.01',
+            'expires_in_days' => 'required|integer|min:1',
         ]);
 
         DB::transaction(function () use ($validated, $request, $menu) {

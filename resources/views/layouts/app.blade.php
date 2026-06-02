@@ -188,147 +188,141 @@
 
                     <!-- ================= MENU ================= -->
                     <nav class="flex-1 px-3 space-y-1 overflow-y-auto no-scrollbar">
+                        
+                    <!-- DASHBOARD -->
+                     <a 
+                        href="{{ route('dashboard') }}"
+                        @class([
+                            'flex items-center h-11 rounded-xl transition group',
+                            'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('dashboard'),
+                            'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('dashboard'),
+                        ])
+                    >
+                        <div class="w-12 flex justify-center items-center">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-sm font-medium">
+                            Dashboard
+                        </span>
+                    </a>
+        
+                        <!-- Login Owner -->           
                         @if(auth()->user()->role === 'owner')
 
-                            <!-- DASHBOARD -->
-                            <a
-                                href="{{ route('dashboard') }}"
-
-                                @class([
-                                    'flex items-center h-11 rounded-xl transition group',
-
-                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white'
-                                        => request()->routeIs('dashboard'),
-
-                                    'hover:bg-white/[0.06] text-white/80'
-                                        => !request()->routeIs('dashboard'),
-                                ])
-                            >
-
-                                <div class="w-12 flex justify-center items-center">
-                                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                                </div>
-
-                                <span class="text-sm font-medium">
-                                    Dashboard
-                                </span>
-
-                            </a>
-
                             <!-- RAW MATERIAL -->
-                            <a
+                            <a 
                                 href="{{ route('owner.raw-materials.index') }}"
 
                                 @class([
                                     'flex items-center h-11 rounded-xl transition group',
-
-                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white'
-                                        => request()->routeIs('owner.raw-materials.*'),
-
-                                    'hover:bg-white/[0.06] text-white/80'
-                                        => !request()->routeIs('owner.raw-materials.*'),
-
+                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.raw-materials.*'),
+                                    'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.raw-materials.*'),
                                 ])
                             >
-
                                 <div class="w-12 flex justify-center items-center">
                                     <i data-lucide="boxes" class="w-5 h-5"></i>
                                 </div>
-
                                 <span class="text-sm font-medium">
                                     Raw Material
                                 </span>
-
                             </a>
 
                             <!-- MENU -->
                             <a href="{{ route('owner.menus.index') }}"
-                            @class([
-                                'flex items-center h-11 rounded-xl transition group',
-                                'bg-white/15 shadow-lg text-white' => request()->routeIs('owner.menus.*'),
-                                'hover:bg-white/10 text-white/80' => !request()->routeIs('owner.menus.*'),
+                                @class([
+                                    'flex items-center h-11 rounded-xl transition group',
+                                    'bg-white/15 shadow-lg text-white' => request()->routeIs('owner.menus.*'),
+                                    'hover:bg-white/10 text-white/80' => !request()->routeIs('owner.menus.*'),
                                 ])
                             >
                                 <div class="w-12 flex justify-center items-center">
                                     <i data-lucide="utensils-crossed" class="w-5 h-5"></i>
                                 </div>
-
                                 <span class="text-sm font-medium">
                                     Menu
                                 </span>
-
                             </a>
 
                             <!-- PRODUKSI -->
-                            <a href="#"
-                                class="flex items-center h-11 rounded-xl
-                                    hover:bg-white/[0.06] transition group"
+                            <a href="{{ route('owner.productions.index') }}"
+                                @class([
+                                    'flex items-center h-11 rounded-xl transition group',
+                                    'bg-white/15 shadow-lg text-white' => request()->routeIs('owner.productions.*'),
+                                    'hover:bg-white/10 text-white/80' => !request()->routeIs('owner.productions.*'),
+                                ])
                             >
-
                                 <div class="w-12 flex justify-center items-center">
                                     <i data-lucide="factory" class="w-5 h-5"></i>
                                 </div>
-
                                 <span class="text-sm font-medium">
                                     Produksi
                                 </span>
-
                             </a>
 
                             <!-- STOK JADI -->
-                            <a href="#"
-                                class="flex items-center h-11 rounded-xl
-                                    hover:bg-white/[0.06] transition group"
+                            <a href="{{ route('owner.stok-jadi.index') }}"
+                                class="flex items-center h-11 rounded-xl hover:bg-white/[0.06] text-white/80 transition group"
                             >
-
                                 <div class="w-12 flex justify-center items-center">
                                     <i data-lucide="package-check" class="w-5 h-5"></i>
                                 </div>
-
                                 <span class="text-sm font-medium">
                                     Stok Jadi
                                 </span>
-
                             </a>
 
                             <!-- ARMADA -->
                             <a href="{{ route('owner.armada.index') }}"
                                 @class([
-                                'flex items-center h-11 rounded-xl transition group',
-                                'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.armada.*'),
-                                'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.armada.*'),
+                                    'flex items-center h-11 rounded-xl transition group',
+                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.armada'),
+                                    'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.armada'),
                                 ])
                             >
-
                                 <div class="w-12 flex justify-center items-center">
                                     <i data-lucide="truck" class="w-5 h-5"></i>
                                 </div>
-
                                 <span class="text-sm font-medium">
                                     Armada
                                 </span>
-
                             </a>
 
                             <!-- REPORT -->
                             <a href="#"
-                                class="flex items-center h-11 rounded-xl
-                                    hover:bg-white/[0.06] transition group"
+                                class="flex items-center h-11 rounded-xl hover:bg-white/[0.06] transition group"
                             >
-
                                 <div class="w-12 flex justify-center items-center">
                                     <i data-lucide="file-text" class="w-5 h-5"></i>
                                 </div>
-
                                 <span class="text-sm font-medium">
                                     Report
                                 </span>
-
                             </a>
 
+                        <!-- Login Produksi -->
+                        @elseif(auth()->user()->role === 'produksi')
+
+                            <!-- Antrean Produksi -->
+                            <a href="{{ route('produksi.productions.index') }}"
+                                @class([
+                                    'flex items-center h-11 rounded-xl transition group',
+                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('produksi.productions.*'),
+                                    'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('produksi.productions.*'),
+                                ])
+                            >
+                                <div class="w-12 flex justify-center items-center">
+                                    <i data-lucide="chef-hat" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-sm font-medium">
+                                    Antrean Produksi
+                                </span>
+                            </a>
+
+                        @elseif(auth()->user()->role === 'armada')
+                        
                         @endif
 
-                    </nav>
+                                    </nav>
 
                     <!-- ================= BOTTOM ================= -->
                     <div class="p-3 border-t border-white/10">
