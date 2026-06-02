@@ -4,8 +4,9 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RawMaterialController;
-use App\Http\Controllers\ProductionController; // 1. Import the controller
+use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\Owner\ProductionController as OwnerProductionController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -51,6 +52,8 @@ Route::middleware('auth')->group(function () {
             [MenuController::class, 'toggleActive']
             )->name('menus.toggle-active');
 
+        // PRODUCTIONS
+        Route::resource('productions', OwnerProductionController::class);
         
     });
 
