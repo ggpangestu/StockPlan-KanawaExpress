@@ -44,6 +44,11 @@
                         <input type="number" name="price" value="{{ old('price') }}" class="w-full mt-2 rounded-2xl border border-black/10 px-4 h-11" required>
                     </div>
                     <div>
+                    <label class="text-sm font-medium text-[#5c4432]">Masa Simpan (Hari)</label>
+                    <input type="number" name="expires_in_days" value="{{ old('expires_in_days', $menu->expires_in_days ?? 1) }}" min="1" class="w-full mt-2 rounded-2xl border border-black/10 px-4 h-11" required>
+                    <p class="text-xs text-[#5c4432] mt-1">Berapa hari menu ini bertahan setelah diproduksi?</p>
+                    </div>
+                    <div>
                         <label class="text-sm font-medium text-[#5c4432]">Description (Optional)</label>
                         <textarea name="description" rows="3" class="w-full mt-2 rounded-2xl border border-black/10 px-4 py-3">{{ old('description') }}</textarea>
                     </div>
