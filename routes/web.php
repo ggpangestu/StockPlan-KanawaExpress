@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RawMaterialController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\ArmadaController;
 use App\Http\Controllers\Owner\ProductionController as OwnerProductionController;
 use App\Http\Controllers\Owner\FinishedGoodController;
 
@@ -59,9 +60,10 @@ Route::middleware('auth')->group(function () {
         // STOK JADI (FINISHED GOODS)
         Route::get('stok-jadi', [FinishedGoodController::class, 'index'])->name('stok-jadi.index');
         
-    });
+        // ARMADA
+        Route::resource('armada', ArmadaController::class);
 
-    Route::get('/owner/armada', function () {return view('owner.kelola-armada');})->name('owner.armada');
+    });
 
     
     // ROUTE UNTUK TIM DAPUR / PRODUKSI
