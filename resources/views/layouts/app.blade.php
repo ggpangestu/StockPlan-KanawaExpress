@@ -231,8 +231,8 @@
                             <a href="{{ route('owner.menus.index') }}"
                                 @class([
                                     'flex items-center h-11 rounded-xl transition group',
-                                    'bg-white/15 shadow-lg text-white' => request()->routeIs('owner.menus.*'),
-                                    'hover:bg-white/10 text-white/80' => !request()->routeIs('owner.menus.*'),
+                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.menus.*'),
+                                    'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.menus.*'),
                                 ])
                             >
                                 <div class="w-12 flex justify-center items-center">
@@ -247,8 +247,8 @@
                             <a href="{{ route('owner.productions.index') }}"
                                 @class([
                                     'flex items-center h-11 rounded-xl transition group',
-                                    'bg-white/15 shadow-lg text-white' => request()->routeIs('owner.productions.*'),
-                                    'hover:bg-white/10 text-white/80' => !request()->routeIs('owner.productions.*'),
+                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.productions.*'),
+                                    'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.productions.*'),
                                 ])
                             >
                                 <div class="w-12 flex justify-center items-center">
@@ -261,8 +261,12 @@
 
                             <!-- STOK JADI -->
                             <a href="{{ route('owner.stok-jadi.index') }}"
-                                class="flex items-center h-11 rounded-xl hover:bg-white/[0.06] text-white/80 transition group"
-                            >
+                                @class([
+                                    'flex items-center h-11 rounded-xl transition group',
+                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.stok-jadi.*'),
+                                    'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.stok-jadi.*'),
+                                ])
+>
                                 <div class="w-12 flex justify-center items-center">
                                     <i data-lucide="package-check" class="w-5 h-5"></i>
                                 </div>
@@ -275,8 +279,8 @@
                             <a href="{{ route('owner.armada.index') }}"
                                 @class([
                                     'flex items-center h-11 rounded-xl transition group',
-                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.armada'),
-                                    'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.armada'),
+                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.armada.*'),
+                                    'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.armada.*'),
                                 ])
                             >
                                 <div class="w-12 flex justify-center items-center">
@@ -289,7 +293,11 @@
 
                             <!-- REPORT -->
                             <a href="#"
-                                class="flex items-center h-11 rounded-xl hover:bg-white/[0.06] transition group"
+                                @class([
+                                    'flex items-center h-11 rounded-xl transition group',
+                                    'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.reports.*'),
+                                    'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.reports.*'),
+                                ])
                             >
                                 <div class="w-12 flex justify-center items-center">
                                     <i data-lucide="file-text" class="w-5 h-5"></i>

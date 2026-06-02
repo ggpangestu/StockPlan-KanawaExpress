@@ -10,12 +10,9 @@
         <div class="flex items-center gap-2">
             <div class="w-2 h-2 bg-[#8b6b5a] rounded-full"></div>
 
-            <p>
-                Bahan baku akan bertahan:
-                <span class="font-semibold text-[#5c4432]">
-                    7 hari (Good)
-                </span>
-            </p>
+            <span>
+                You have 3 new notifications
+            </span>
         </div>
 
         <div class="flex items-center gap-2">
