@@ -7,6 +7,7 @@ use App\Http\Controllers\RawMaterialController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\Owner\ProductionController as OwnerProductionController;
+use App\Http\Controllers\Owner\FinishedGoodController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -54,16 +55,29 @@ Route::middleware('auth')->group(function () {
 
         // PRODUCTIONS
         Route::resource('productions', OwnerProductionController::class);
+
+        // STOK JADI (FINISHED GOODS)
+        Route::get('stok-jadi', [FinishedGoodController::class, 'index'])->name('stok-jadi.index');
         
     });
 
     Route::get('/owner/armada', function () {return view('owner.kelola-armada');})->name('owner.armada');
 
-    Route::get('/production', [ProductionController::class, 'index'])
-        ->name('production');
-
-    Route::get('/production/{id}', [ProductionController::class, 'show'])
-        ->name('production.show');
+    
+    // ROUTE UNTUK TIM DAPUR / PRODUKSI
+    Route::prefix('produksi')
+    ->name('produksi.')
+    ->middleware('role:produksi') // Aktifkan nanti jika role sudah siap
+    ->group(function () {
+        
+        // Memakai ProductionController murni (Milik Dapur)
+        Route::get('productions', [ProductionController::class, 'index'])->name('productions.index');
+        Route::get('productions/{production}', [ProductionController::class, 'show'])->name('productions.show');
+        
+        // Action Buttons
+        Route::patch('productions/{production}/start', [ProductionController::class, 'start'])->name('productions.start');
+        Route::post('productions/{production}/complete', [ProductionController::class, 'complete'])->name('productions.complete');
+    });
 
 });
 

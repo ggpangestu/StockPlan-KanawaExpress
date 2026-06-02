@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Production;
+use App\Models\ProductionItem;
 use App\Models\Menu;
 use App\Models\RawMaterial;
 use Illuminate\Support\Facades\DB;
