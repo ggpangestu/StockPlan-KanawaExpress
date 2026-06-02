@@ -292,11 +292,11 @@
                             </a>
 
                             <!-- ARMADA -->
-                            <a href="{{ route('owner.armada') }}"
+                            <a href="{{ route('owner.armada.index') }}"
                                 @class([
                                 'flex items-center h-11 rounded-xl transition group',
-                                'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.armada'),
-                                'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.armada'),
+                                'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('owner.armada.*'),
+                                'hover:bg-white/[0.06] text-white/80' => !request()->routeIs('owner.armada.*'),
                                 ])
                             >
 
