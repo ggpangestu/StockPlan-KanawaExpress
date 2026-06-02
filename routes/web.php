@@ -53,10 +53,10 @@ Route::middleware('auth')->group(function () {
             [RawMaterialController::class, 'toggleActive']
         )->name('raw-materials.toggle-active');
           
-         Route::get('/owner/armada', function () {return view('owner.kelola-armada');})->name('owner.armada');
         
-    });
-
+        });
+    Route::get('/owner/armada', function () {return view('owner.kelola-armada');})->name('owner.armada');
+        
     Route::get('/production', [ProductionController::class, 'index'])
         ->name('production');
 
