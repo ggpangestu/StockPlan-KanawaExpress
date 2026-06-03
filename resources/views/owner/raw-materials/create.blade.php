@@ -9,18 +9,21 @@
 
         <a
             href="{{ route('owner.raw-materials.index') }}"
-            class="inline-flex items-center gap-1
-                text-sm text-[#8a8a8a]
+            class="text-[#8a8a8a]
                 hover:text-[#2f2f2f]
+                text-sm font-medium
                 transition"
         >
-            <i
-                data-lucide="arrow-left"
-                class="w-5 h-5"
-            ></i>
-
-            Back
+            Raw Materials
         </a>
+
+        <span class="text-sm font-medium text-[#c5c5c5]">
+            /
+        </span>
+
+        <span class="text-[#2f2f2f] text-sm font-medium">
+            Create
+        </span>
 
         <h1 class="text-3xl mt-3 font-bold text-[#2f2f2f]">
             Create Raw Material
@@ -29,6 +32,7 @@
         <p class="text-[#8a8a8a] mt-1">
             Create a new raw material for Kanawa Express.
         </p>
+        
 
     </div>
 
