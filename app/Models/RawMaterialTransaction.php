@@ -58,6 +58,106 @@ class RawMaterialTransaction extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeSearch(
+        $query,
+        ?string $search
+    )
+    {
+        return $query->when(
+
+            $search,
+
+            function ($query) use ($search) {
+
+                $query->whereHas(
+
+                    'rawMaterial',
+
+                    function ($material) use ($search) {
+
+                        $material->where(
+                            'name',
+                            'like',
+                            "%{$search}%"
+                        );
+
+                    }
+
+                );
+
+            }
+
+        );
+    }
+
+    public function scopeType(
+        $query,
+        ?string $type
+    )
+    {
+        return $query->when(
+
+            $type,
+
+            fn ($query) =>
+
+                $query->where(
+                    'type',
+                    $type
+                )
+
+        );
+    }
+
+    public function scopeTimeframe(
+        $query,
+        ?string $timeframe
+    ) {
+
+        return match ($timeframe) {
+
+            'today' =>
+                $query->whereDate(
+                    'created_at',
+                    today()
+                ),
+
+            'past_7_days' =>
+                $query->where(
+                    'created_at',
+                    '>=',
+                    now()->subDays(7)
+                ),
+
+            'past_30_days' =>
+                $query->where(
+                    'created_at',
+                    '>=',
+                    now()->subDays(30)
+                ),
+
+            'this_month' =>
+                $query->whereMonth(
+                    'created_at',
+                    now()->month
+                )
+                ->whereYear(
+                    'created_at',
+                    now()->year
+                ),
+
+            default => $query,
+
+        };
+
+    }
+
     public function getTypeLabelAttribute(): string
     {
         return match ($this->type) {

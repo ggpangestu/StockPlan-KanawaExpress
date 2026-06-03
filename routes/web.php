@@ -9,6 +9,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ArmadaController;
 use App\Http\Controllers\Owner\ProductionController as OwnerProductionController;
 use App\Http\Controllers\Owner\FinishedGoodController;
+use App\Http\Controllers\Owner\TransactionReportController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -62,6 +63,13 @@ Route::middleware('auth')->group(function () {
         
         // ARMADA
         Route::resource('armada', ArmadaController::class);
+
+        // REPORTS
+
+        Route::get(
+            'reports/transactions',
+            [TransactionReportController::class, 'index']
+        )->name('reports.transactions');
 
     });
 
