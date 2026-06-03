@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Models\Menu;
 use App\Models\RawMaterial;
+use Illuminate\Support\Facades\Auth;
 
 class MenuController extends Controller
 {
@@ -91,7 +92,7 @@ class MenuController extends Controller
                 $validated['image'] = $request->file('image')->store('menus', 'public');
             }
             
-            $validated['created_by'] = auth()->id();
+            $validated['created_by'] = Auth::id();
             $menu = Menu::create($validated);
 
             // Menyimpan Ingredients ke Pivot Table

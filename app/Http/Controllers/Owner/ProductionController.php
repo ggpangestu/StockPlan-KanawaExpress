@@ -11,6 +11,7 @@ use App\Models\ProductionItem;
 use App\Models\Menu;
 use App\Models\RawMaterial;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ProductionController extends Controller
 {
@@ -90,7 +91,7 @@ class ProductionController extends Controller
                 'plan_date' => $validated['plan_date'],
                 'notes' => $validated['notes'],
                 'status' => 'planned',
-                'created_by' => auth()->id(),
+                'created_by' => Auth::id(),
             ]);
 
             foreach ($request->items as $item) {
