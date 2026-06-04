@@ -43,4 +43,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function armadaSessions()
+    {
+        return $this->hasMany(ArmadaSession::class, 'armada_user_id');
+    }
+
+    public function returnChecks()
+    {
+        return $this->hasMany(ReturnCheck::class, 'armada_user_id');
+    }
 }

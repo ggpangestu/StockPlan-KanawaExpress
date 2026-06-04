@@ -21,8 +21,13 @@ class FinishedGoodController extends Controller
             $query->where('status', 'available')->where('current_quantity', '>', 0);
         } elseif ($filter === 'expired') {
             $query->where('status', 'expired');
+        } elseif ($filter === 'expired_damaged') {
+            $query->where('status', 'expired_damaged');
         } elseif ($filter === 'empty') {
-            $query->where('status', 'empty')->orWhere('current_quantity', 0);
+            $query->where(function ($query) {
+                $query->where('status', 'empty')
+                    ->orWhere('current_quantity', 0);
+            });
         }
 
         $goods = $query->get();
@@ -38,6 +43,7 @@ class FinishedGoodController extends Controller
                                 ->whereBetween('expired_date', [$today, $today->copy()->addDays(1)])
                                 ->count(),
             'total_expired' => FinishedGood::where('status', 'expired')->sum('current_quantity'),
+            'total_expired_damaged' => FinishedGood::where('status', 'expired_damaged')->sum('current_quantity'),
         ];
 
         return view('owner.finished-goods.index', compact('goods', 'filter', 'stats'));
