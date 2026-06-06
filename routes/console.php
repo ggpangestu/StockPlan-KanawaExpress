@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Karyawan ini akan bekerja setiap hari pada jam 00:01 dini hari
-Schedule::command('goods:check-expired')->dailyAt('00:01');
+Schedule::command('goods:check-expired')->everyMinute();
