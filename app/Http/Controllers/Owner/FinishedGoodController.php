@@ -18,11 +18,20 @@ class FinishedGoodController extends Controller
             ->orderBy('expired_date', 'asc'); // Yang mau basi ditaruh paling atas (FIFO)
 
         if ($filter === 'available') {
-            $query->where('status', 'available')->where('current_quantity', '>', 0);
+            $query->where('status', 'available')
+                  ->where('current_quantity', '>', 0)
+                  // TAMBAHAN PENGAMAN: Sembunyikan paksa jika tanggalnya sudah lewat hari ini
+                  ->whereDate('expired_date', '>=', Carbon::today()); 
         } elseif ($filter === 'expired') {
-            $query->where('status', 'expired');
+          // Tampilkan yang statusnya expired ATAU yang tanggalnya sudah lewat hari ini (Na'il)
+            $query->where(function($q) {
+                $q->where('status', 'expired')
+                  ->orWhereDate('expired_date', '<', Carbon::today());
+            });
+          
         } elseif ($filter === 'expired_damaged') {
             $query->where('status', 'expired_damaged');
+          
         } elseif ($filter === 'empty') {
             $query->where(function ($query) {
                 $query->where('status', 'empty')

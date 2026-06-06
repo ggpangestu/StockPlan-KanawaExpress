@@ -19,14 +19,20 @@ class ProductionController extends Controller
     {
         $filter = $request->get('filter', 'all');
 
-        // REVISI: Load ingredients agar kita bisa menghitung booking-an stok
-        $query = Production::with(['items.menu.ingredients']);
+        $dateFilter = $request->get('date');
+
+        // Wajib me-load relasi wastes agar badge merah jalan
+        $query = Production::with(['items.menu.ingredients', 'wastes']);
 
         if ($filter !== 'all') {
             $query->where('status', $filter);
         }
 
-        $productions = $query->orderByRaw("FIELD(status, 'processing', 'planned', 'completed', 'cancelled')")->orderBy('plan_date', 'asc')->get();
+        if ($dateFilter) {
+            $query->whereDate('plan_date', $dateFilter);
+        }
+
+        $productions = $query->orderByRaw("FIELD(status, 'processing', 'planned', 'completed', 'cancelled')")->orderBy('plan_date', 'asc')->paginate(10);
 
         /*
         |--------------------------------------------------------------------------
@@ -152,5 +158,37 @@ class ProductionController extends Controller
 
         return redirect()->route('owner.productions.index')
             ->with('success', 'Rencana produksi berhasil dihapus!');
+    }
+
+    public function show(Production $production): View
+    {
+        // Load wastes untuk kalkulasi
+        $production->load(['items.menu.ingredients', 'creator', 'wastes.rawMaterial']);
+
+        $totalHpp = 0;
+        $totalTargetCups = 0;
+
+        // 1. HPP dari Target Normal
+        foreach ($production->items as $item) {
+            $totalTargetCups += $item->target_quantity;
+            if ($item->menu) {
+                foreach ($item->menu->ingredients as $ing) {
+                    $qty = $ing->pivot->quantity * $item->target_quantity;
+                    $pricePerUnit = ($ing->conversion_value > 0) ? ($ing->latest_price / $ing->conversion_value) : 0;
+                    $totalHpp += ($qty * $pricePerUnit);
+                }
+            }
+        }
+
+        // 2. HPP dari Bahan Mentah yang Tumpah/Wasted! (Akurasi Tinggi)
+        foreach ($production->wastes as $waste) {
+            $rm = $waste->rawMaterial;
+            if ($rm) {
+                $pricePerUnit = ($rm->conversion_value > 0) ? ($rm->latest_price / $rm->conversion_value) : 0;
+                $totalHpp += ($waste->quantity * $pricePerUnit);
+            }
+        }
+
+        return view('owner.productions.show', compact('production', 'totalHpp', 'totalTargetCups'));
     }
 }

@@ -7,7 +7,7 @@ use App\Models\Menu;
 
 class ProductionItem extends Model
 {
-    protected $fillable = ['production_id', 'menu_id', 'target_quantity', 'actual_quantity'];
+    protected $fillable = ['production_id', 'menu_id', 'target_quantity', 'actual_quantity', 'wasted_quantity'];
 
     public function menu()
     {
