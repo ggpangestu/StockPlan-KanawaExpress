@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class FinishedGood extends Model
 {
+    public const STATUS_AVAILABLE = 'available';
+    public const STATUS_EMPTY = 'empty';
+    public const STATUS_EXPIRED = 'expired';
+    public const STATUS_EXPIRED_DAMAGED = 'expired_damaged';
+
     protected $fillable = [
         'menu_id',
         'production_id',
@@ -29,5 +34,15 @@ class FinishedGood extends Model
     public function production()
     {
         return $this->belongsTo(Production::class);
+    }
+
+    public function armadaSessionItems()
+    {
+        return $this->hasMany(ArmadaSessionItem::class);
+    }
+
+    public function returnChecks()
+    {
+        return $this->hasMany(ReturnCheck::class);
     }
 }

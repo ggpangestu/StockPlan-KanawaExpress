@@ -23,13 +23,20 @@ class FinishedGoodController extends Controller
                   // TAMBAHAN PENGAMAN: Sembunyikan paksa jika tanggalnya sudah lewat hari ini
                   ->whereDate('expired_date', '>=', Carbon::today()); 
         } elseif ($filter === 'expired') {
-            // Tampilkan yang statusnya expired ATAU yang tanggalnya sudah lewat hari ini
+          // Tampilkan yang statusnya expired ATAU yang tanggalnya sudah lewat hari ini (Na'il)
             $query->where(function($q) {
                 $q->where('status', 'expired')
                   ->orWhereDate('expired_date', '<', Carbon::today());
             });
+          
+        } elseif ($filter === 'expired_damaged') {
+            $query->where('status', 'expired_damaged');
+          
         } elseif ($filter === 'empty') {
-            $query->where('status', 'empty')->orWhere('current_quantity', 0);
+            $query->where(function ($query) {
+                $query->where('status', 'empty')
+                    ->orWhere('current_quantity', 0);
+            });
         }
 
         $goods = $query->get();
@@ -45,6 +52,7 @@ class FinishedGoodController extends Controller
                                 ->whereBetween('expired_date', [$today, $today->copy()->addDays(1)])
                                 ->count(),
             'total_expired' => FinishedGood::where('status', 'expired')->sum('current_quantity'),
+            'total_expired_damaged' => FinishedGood::where('status', 'expired_damaged')->sum('current_quantity'),
         ];
 
         return view('owner.finished-goods.index', compact('goods', 'filter', 'stats'));

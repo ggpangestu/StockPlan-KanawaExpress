@@ -29,8 +29,22 @@ class UserSeeder extends Seeder
             ],
 
             [
-                'name' => 'Armada',
-                'username' => 'armada',
+                'name' => 'Armada 1',
+                'username' => 'armada1',
+                'password' => Hash::make('123456'),
+                'role' => 'armada',
+            ],
+
+            [
+                'name' => 'Armada 2',
+                'username' => 'armada2',
+                'password' => Hash::make('123456'),
+                'role' => 'armada',
+            ],
+
+            [
+                'name' => 'Armada 3',
+                'username' => 'armada3',
                 'password' => Hash::make('123456'),
                 'role' => 'armada',
             ],

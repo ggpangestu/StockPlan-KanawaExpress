@@ -220,6 +220,8 @@
                             @include('layouts.sidebar.produksi')
 
                         @elseif(auth()->user()->role === 'armada')
+
+                            @include('layouts.sidebar.armada')
                         
                         @endif
 

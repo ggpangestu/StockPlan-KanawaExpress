@@ -14,6 +14,7 @@
                     <option value="available" {{ $filter === 'available' ? 'selected' : '' }}>Ready</option>
                     <option value="empty" {{ $filter === 'empty' ? 'selected' : '' }}>Habis Terjual</option>
                     <option value="expired" {{ $filter === 'expired' ? 'selected' : '' }}>Expired</option>
+                    <option value="expired_damaged" {{ $filter === 'expired_damaged' ? 'selected' : '' }}>Expired / Damaged</option>
                 </select>
             </form>
         </div>
@@ -45,8 +46,8 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </div>
             <div>
-                <p class="text-sm font-bold text-[#8a8a8a] uppercase tracking-wider mb-1">Total Porsi Basi</p>
-                <h3 class="text-3xl font-black text-red-600">{{ number_format($stats['total_expired'], 0, ',', '.') }}</h3>
+                <p class="text-sm font-bold text-[#8a8a8a] uppercase tracking-wider mb-1">Basi / Rusak</p>
+                <h3 class="text-3xl font-black text-red-600">{{ number_format($stats['total_expired'] + $stats['total_expired_damaged'], 0, ',', '.') }}</h3>
             </div>
         </div>
     </div>
@@ -135,6 +136,11 @@
                                 @elseif($item->current_quantity == 0 || $item->status === 'empty')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">
                                         Habis
+                                    </span>
+                                @elseif($item->status === 'expired_damaged')
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                        Expired / Damaged
                                     </span>
                                 @elseif($isExpired)
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-600">

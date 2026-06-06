@@ -7,9 +7,12 @@ use App\Http\Controllers\RawMaterialController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ArmadaController;
+use App\Http\Controllers\Armada\SessionController as ArmadaSessionController;
+use App\Http\Controllers\Owner\ArmadaSessionController as OwnerArmadaSessionController;
 use App\Http\Controllers\Owner\ProductionController as OwnerProductionController;
 use App\Http\Controllers\Owner\FinishedGoodController;
 use App\Http\Controllers\Owner\TransactionReportController;
+use App\Http\Controllers\Produksi\ReturnCheckController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -63,6 +66,9 @@ Route::middleware('auth')->group(function () {
         
         // ARMADA
         Route::resource('armada', ArmadaController::class);
+        Route::get('armada-sessions', [OwnerArmadaSessionController::class, 'index'])->name('armada-sessions.index');
+        Route::get('armada-sessions/live', [OwnerArmadaSessionController::class, 'live'])->name('armada-sessions.live');
+        Route::post('armada-sessions', [OwnerArmadaSessionController::class, 'store'])->name('armada-sessions.store');
 
         // REPORTS
 
@@ -87,6 +93,20 @@ Route::middleware('auth')->group(function () {
         // Action Buttons
         Route::patch('productions/{production}/start', [ProductionController::class, 'start'])->name('productions.start');
         Route::post('productions/{production}/complete', [ProductionController::class, 'complete'])->name('productions.complete');
+
+        Route::get('returns', [ReturnCheckController::class, 'index'])->name('returns.index');
+        Route::patch('returns/{returnCheck}', [ReturnCheckController::class, 'update'])->name('returns.update');
+        Route::patch('returns/{returnCheck}/dispose', [ReturnCheckController::class, 'dispose'])->name('returns.dispose');
+    });
+
+    Route::prefix('armada')
+        ->name('armada.')
+        ->middleware('role:armada')
+        ->group(function () {
+
+        Route::get('sessions', [ArmadaSessionController::class, 'index'])->name('sessions.index');
+        Route::patch('sessions/{session}/sold', [ArmadaSessionController::class, 'updateSold'])->name('sessions.update-sold');
+        Route::patch('sessions/{session}/finish', [ArmadaSessionController::class, 'finish'])->name('sessions.finish');
     });
 
 });

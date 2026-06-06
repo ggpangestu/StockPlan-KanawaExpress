@@ -15,18 +15,17 @@
         </p>
     </div>
 
-    <!-- CARD -->
-    <div class="rounded-3xl bg-white p-6 shadow-sm border border-black/5">
+    <a href="{{ route('armada.sessions.index') }}" class="block rounded-3xl bg-white p-6 shadow-sm border border-black/5 hover:border-[#2f2f2f] transition">
 
         <h2 class="text-lg font-semibold text-[#2c1f16]">
-            Total Stok
+            Stok & Penjualan
         </h2>
 
-        <p class="text-3xl font-bold mt-2 text-[#2c1f16]">
-            1,240
+        <p class="text-sm mt-2 text-[#5c4432]">
+            Catat produk terjual dan selesaikan sesi penjualan.
         </p>
 
-    </div>
+    </a>
 
 </div>
 
