@@ -24,42 +24,53 @@ class ProductionController extends Controller
         return view('prod.index', compact('productions'));
     }
 
-    // Menampilkan detail spesifik dari satu tiket produksi
-    public function show(Production $production): View
+    // --- UBAH FUNGSI SHOW (Kita butuh melempar daftar bahan baku ke view) ---
+    public function show(Production $production)
     {
-        // Load relasi yang dibutuhkan
-        $production->load(['items.menu.ingredients']);
+        // 1. Load relasi tabel
+        $production->load(['items.menu.ingredients', 'creator']);
+        
+        // Ambil hanya bahan baku yang digunakan dalam menu di tiket ini saja
+        $availableIngredients = $production->items
+        ->flatMap(fn($item) => $item->menu->ingredients)
+        ->unique('id')
+        ->values(); // Mengurutkan ulang index agar aman di JSON
 
-        // Kalkulasi Kebutuhan Bahan Baku & HPP Total
-        $ingredientsNeeded = [];
-        $totalHpp = 0;
+        // 3. Kalkulasi ulang untuk Tampilan Dapur
         $totalCups = 0;
+        $totalHpp = 0;
+        $ingredientsNeeded = [];
 
         foreach ($production->items as $item) {
             $totalCups += $item->target_quantity;
-            
-            foreach ($item->menu->ingredients as $ing) {
-                if (!isset($ingredientsNeeded[$ing->id])) {
-                    $ingredientsNeeded[$ing->id] = [
-                        'name' => $ing->name,
-                        'needed' => 0,
-                        'unit' => $ing->base_unit,
-                        'stock' => $ing->total_stock, // Stok fisik saat ini
-                    ];
-                }
-                
-                $qty = $ing->pivot->quantity * $item->target_quantity;
-                $ingredientsNeeded[$ing->id]['needed'] += $qty;
 
-                // Kalkulasi HPP
-                $pricePerUnit = ($ing->conversion_value > 0) ? ($ing->latest_price / $ing->conversion_value) : 0;
-                $totalHpp += ($qty * $pricePerUnit);
+            if ($item->menu) {
+                foreach ($item->menu->ingredients as $ing) {
+                    $neededQty = $ing->pivot->quantity * $item->target_quantity;
+                    
+                    // Kalkulasi HPP
+                    $pricePerUnit = ($ing->conversion_value > 0) ? ($ing->latest_price / $ing->conversion_value) : 0;
+                    $totalHpp += ($neededQty * $pricePerUnit);
+
+                    // Kalkulasi Kebutuhan Bahan Baku vs Stok
+                    if (!isset($ingredientsNeeded[$ing->id])) {
+                        // Hitung total fisik (Terbuka + Tersegel)
+                        $totalStock = $ing->opened_stock + ($ing->sealed_stock * $ing->conversion_value);
+
+                        $ingredientsNeeded[$ing->id] = [
+                            'name' => $ing->name,
+                            'unit' => $ing->unit,
+                            'needed' => 0,
+                            'stock' => $totalStock
+                        ];
+                    }
+                    $ingredientsNeeded[$ing->id]['needed'] += $neededQty;
+                }
             }
         }
 
-        $hppPerCup = $totalCups > 0 ? ($totalHpp / $totalCups) : 0;
-
-        return view('prod.show', compact('production', 'ingredientsNeeded', 'totalHpp', 'totalCups', 'hppPerCup'));
+        // 4. Lempar SEMUA variabel ke View Dapur
+        return view('prod.show', compact('production', 'availableIngredients', 'totalCups', 'totalHpp', 'ingredientsNeeded'));
     }
 
     // Fungsi mengubah status dari Planned menjadi Processing
@@ -71,58 +82,81 @@ class ProductionController extends Controller
         return back()->with('success', 'Status diubah ke Work in Progress. Selamat bekerja!');
     }
 
-    // THE MAGIC TRICKS: Menyelesaikan Produksi
-    public function complete(Request $request, Production $production): RedirectResponse
+    // Menyelesaikan Produksi (Strict Fulfillment Logic)
+    public function complete(Request $request, Production $production)
     {
         $request->validate([
-            'actual_quantities' => 'required|array',
-            'actual_quantities.*' => 'required|integer|min:0',
+            'execution_notes' => 'nullable|string',
+            'wasted_materials' => 'nullable|array', // Menangkap array bahan tumpah
         ]);
 
         DB::transaction(function () use ($request, $production) {
-            
-            // SIHIR 1: Ubah status plan
-            $production->update(['status' => 'completed']);
+            $production->update([
+                'status' => 'completed',
+                'execution_notes' => $request->execution_notes
+            ]);
 
-            foreach ($request->actual_quantities as $itemId => $actualQty) {
-                if ($actualQty <= 0) continue; 
-                
-                $prodItem = ProductionItem::find($itemId);
-                $prodItem->update(['actual_quantity' => $actualQty]);
+            // TAHAP A: Potong Bahan Baku Normal & Masukkan Stok Jadi
+            foreach ($production->items as $prodItem) {
+                $targetQty = $prodItem->target_quantity;
                 $menu = $prodItem->menu;
 
-                // SIHIR 2: Memotong Bahan Baku
                 foreach ($menu->ingredients as $ing) {
-                    $totalNeeded = $ing->pivot->quantity * $actualQty;
+                    $totalNeeded = $ing->pivot->quantity * $targetQty;
                     $rawMaterial = $ing;
 
+                    // Logika potong stok
                     if ($rawMaterial->opened_stock < $totalNeeded) {
                         $shortage = $totalNeeded - $rawMaterial->opened_stock;
                         $packagesToOpen = ceil($shortage / $rawMaterial->conversion_value);
-                        
                         $rawMaterial->sealed_stock -= $packagesToOpen;
                         $rawMaterial->opened_stock += ($packagesToOpen * $rawMaterial->conversion_value);
                     }
-
                     $rawMaterial->opened_stock -= $totalNeeded;
                     $rawMaterial->save();
                 }
 
-                // SIHIR 3: Masukkan ke Stok Jadi
-                FinishedGood::create([
-                    'menu_id' => $menu->id,
-                    'production_id' => $production->id,
-                    'initial_quantity' => $actualQty,
-                    'current_quantity' => $actualQty,
-                    'production_date' => now()->toDateString(),
-                    'expired_date' => now()->addDays($menu->expires_in_days ?? 1)->toDateString(),
-                    'status' => 'available'
-                ]);
+                // Masuk Etalase (Selalu Full Target)
+                if ($targetQty > 0) {
+                    \App\Models\FinishedGood::create([
+                        'menu_id' => $menu->id,
+                        'production_id' => $production->id,
+                        'initial_quantity' => $targetQty,
+                        'current_quantity' => $targetQty,
+                        'production_date' => now()->toDateString(),
+                        'expired_date' => now()->addDays($menu->expires_in_days ?? 1)->toDateString(),
+                        'status' => 'available'
+                    ]);
+                }
+            }
+
+            // TAHAP B: Catat dan Potong Bahan Baku Wasted (Tumpah)
+            if ($request->has('wasted_materials')) {
+                foreach ($request->wasted_materials as $waste) {
+                    if (!empty($waste['id']) && !empty($waste['qty']) && $waste['qty'] > 0) {
+                        
+                        // 1. Catat ke tabel riwayat tumpah
+                        \App\Models\ProductionWaste::create([
+                            'production_id' => $production->id,
+                            'raw_material_id' => $waste['id'],
+                            'quantity' => $waste['qty']
+                        ]);
+
+                        // 2. Potong stok fisik di gudang
+                        $rm = \App\Models\RawMaterial::find($waste['id']);
+                        if ($rm->opened_stock < $waste['qty']) {
+                            $shortage = $waste['qty'] - $rm->opened_stock;
+                            $packagesToOpen = ceil($shortage / $rm->conversion_value);
+                            $rm->sealed_stock -= $packagesToOpen;
+                            $rm->opened_stock += ($packagesToOpen * $rm->conversion_value);
+                        }
+                        $rm->opened_stock -= $waste['qty'];
+                        $rm->save();
+                    }
+                }
             }
         });
 
-        // Setelah selesai, lemparkan kembali ke halaman index produksi
-        return redirect()->route('produksi.productions.index')
-            ->with('success', 'Produksi Selesai! Bahan baku otomatis dipotong dan barang masuk ke Stok Jadi.');
+        return redirect()->route('produksi.productions.index')->with('success', 'Produksi Selesai! Bahan baku tumpah telah dipotong dari stok.');
     }
 }

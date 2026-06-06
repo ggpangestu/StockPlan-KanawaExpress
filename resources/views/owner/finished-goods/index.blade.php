@@ -90,8 +90,14 @@
                                 </div>
                             </td>
                             
-                            <td class="py-4 px-6">
-                                <span class="font-medium text-[#2c1f16] text-sm">{{ $item->production_date->format('d M Y') }}</span>
+                            <td class="py-4 px-6 align-middle">
+                                <div class="font-bold text-[#2c1f16]">
+                                    {{ $item->created_at->format('d M Y') }}
+                                </div>
+                                <div class="text-[11px] font-bold text-[#8a8a8a] mt-0.5 flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i> 
+                                    {{ $item->created_at->format('H:i:s') }} WIB
+                                </div>
                             </td>
 
                             <td class="py-4 px-6">
