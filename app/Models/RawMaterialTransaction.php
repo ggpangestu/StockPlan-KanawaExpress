@@ -158,6 +158,44 @@ class RawMaterialTransaction extends Model
 
     }
 
+    public function scopeYear(
+        $query,
+        ?string $year
+    )
+    {
+        return $query->when(
+
+            $year,
+
+            fn ($query) =>
+
+                $query->whereYear(
+                    'created_at',
+                    $year
+                )
+
+        );
+    }
+
+    public function scopeMonth(
+        $query,
+        ?string $month
+    )
+    {
+        return $query->when(
+
+            $month,
+
+            fn ($query) =>
+
+                $query->whereMonth(
+                    'created_at',
+                    $month
+                )
+
+        );
+    }
+
     public function getTypeLabelAttribute(): string
     {
         return match ($this->type) {

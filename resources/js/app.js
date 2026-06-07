@@ -7,6 +7,10 @@ import { createIcons, icons } from 'lucide';
 
 import Swal from 'sweetalert2';
 
+import ApexCharts from 'apexcharts';
+
+window.ApexCharts = ApexCharts;
+
 window.Alpine = Alpine;
 window.createIcons = createIcons;
 window.icons = icons;

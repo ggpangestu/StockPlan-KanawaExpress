@@ -158,314 +158,113 @@
 
     <div>
 
+        <!-- CHART -->
         <div
             class="
-                grid
-                grid-cols-1
-
-                xl:grid-cols-4
-
-                gap-6
+                bg-white
+                border border-[#e8e8e5]
+                rounded-3xl
+                p-6
             "
         >
 
-            <!-- CHART -->
             <div
                 class="
-
-                    xl:col-span-3
-
-                    bg-white
-                    border border-[#e8e8e5]
-                    rounded-3xl
-                    p-6
-                    min-w-0
+                    flex items-center gap-3
                 "
             >
 
                 <div
                     class="
-                        flex items-center gap-3
+                        w-10 h-10
+                        rounded-2xl
+                        bg-violet-50
+
+                        flex items-center justify-center
                     "
                 >
 
-                    <div
-                        class="
-                            w-10 h-10
-                            rounded-2xl
-                            bg-violet-50
-
-                            flex items-center justify-center
-                        "
-                    >
-
-                        <i
-                            data-lucide="chart-line"
-                            class="w-5 h-5 text-violet-500"
-                        ></i>
-
-                    </div>
-
-                    <div>
-
-                        <div
-                            class="
-                                flex
-                                items-center
-                                justify-between
-                            "
-                        >
-
-                            <h2
-                                class="
-                                    text-lg
-                                    font-semibold
-                                "
-                                x-text="chartTitle"
-                            >
-                            </h2>
-
-                        </div>
-
-                        <p
-                            class="
-                                text-sm
-                                text-[#8a8a8a]
-                            "
-                            x-text="chartDescription"
-                        >
-                        </p>
-
-                    </div>
-
-                    
-                </div>
-                
-                <div
-                    class="
-                        mt-6
-                    "
-                >
-                    <div
-                        x-show="hasChartData"
-                    >
-
-                        <div
-                            x-ref="purchaseTrendChart"
-                            style="height:400px;"
-                        ></div>
-
-                    </div>
-
-                    <div
-                        x-cloak
-                        x-show="!hasChartData"
-                        class="
-                            h-[400px]
-                            flex
-                            items-center
-                            justify-center
-                            text-sm
-                            text-[#8a8a8a]
-                            border
-                            border-dashed
-                            border-[#e8e8e5]
-                            rounded-2xl
-                        "
-                    >
-
-                        No purchase data available for
-                        the selected period.
-
-                    </div>
+                    <i
+                        data-lucide="chart-line"
+                        class="w-5 h-5 text-violet-500"
+                    ></i>
 
                 </div>
 
-            </div>
-
-            {{-- PIE CHART --}}
-
-            <div
-                class="
-                    xl:col-span-1
-
-                    bg-white
-
-                    border border-[#e8e8e5]
-
-                    rounded-3xl
-
-                    p-6
-                "
-            >
-
-                <div
-                    class="
-                        flex items-center gap-3
-                    "
-                >
+                <div>
 
                     <div
                         class="
-                            w-10 h-10
-                            rounded-2xl
-                            bg-violet-50
-
                             flex
                             items-center
-                            justify-center
+                            justify-between
                         "
                     >
-
-                        <i
-                            data-lucide="pie-chart"
-                            class="
-                                w-5 h-5
-                                text-violet-500
-                            "
-                        ></i>
-
-                    </div>
-
-                    <div>
 
                         <h2
                             class="
                                 text-lg
                                 font-semibold
                             "
+                            x-text="chartTitle"
                         >
-                            Transaction Composition
                         </h2>
 
-                        <p
-                            class="
-                                text-sm
-                                text-[#8a8a8a]
-                            "
-                        >
-                            Distribution of transaction types.
-                        </p>
-
                     </div>
 
-                </div>
-
-                <div
-                    class="
-                        mt-6
-
-                        rounded-2xl
-                        border
-                        border-[#e8e8e5]
-                        bg-[#fafaf8]
-
-                        p-4
-
-                        grid
-                        grid-cols-1
-                        sm:grid-cols-2
-
-                        gap-4
-                    "
-                >
-
-                    {{-- Peak Period --}}
-
-                    <div>
-
-                        <p
-                            class="
-                                text-xs
-                                uppercase
-                                tracking-wide
-                                text-[#8a8a8a]
-                            "
-                        >
-                            Peak Period
-                        </p>
-
-                        <p
-                            class="
-                                mt-2
-                                text-lg
-                                font-bold
-                                text-[#1f2937]
-                            "
-                            x-text="
-                                highestPurchase.label
-                            "
-                        ></p>
-
-                        <p
-                            class="
-                                mt-1
-                                text-sm
-                                text-[#8a8a8a]
-                            "
-                            x-text="
-                                formatCurrency(
-                                    highestPurchase.total
-                                )
-                            "
-                        ></p>
-
-                    </div>
-
-                    {{-- Analysis Scope --}}
-
-                    <div>
-
-                        <p
-                            class="
-                                text-xs
-                                uppercase
-                                tracking-wide
-                                text-[#8a8a8a]
-                            "
-                        >
-                            Analysis Scope
-                        </p>
-
-                        <p
-                            class="
-                                mt-2
-                                text-lg
-                                font-bold
-                                text-[#1f2937]
-                            "
-                            x-text="
-                                totalPeriods
-                            "
-                        ></p>
-
-                        <p
-                            class="
-                                mt-1
-                                text-sm
-                                text-[#8a8a8a]
-                            "
-                            x-text="
-                                periodLabel
-                            "
-                        ></p>
-
-                    </div>
+                    <p
+                        class="
+                            text-sm
+                            text-[#8a8a8a]
+                        "
+                        x-text="chartDescription"
+                    >
+                    </p>
 
                 </div>
 
                 
+            </div>
+            
+            <div
+                class="
+                    mt-6
+                    transition-all
+                    duration-500
+                    ease-out
+                "
+                :class="
+                    chartLoading
+                        ? 'opacity-75 scale-[0.995]'
+                        : 'opacity-100 scale-100'
+                "
+            >
 
                 <div
+                    x-ref="purchaseTrendChart"
+                    x-show="hasChartData"
+                    style="height:400px;"
+                ></div>
+
+
+                <div
+                    x-show="!hasChartData"
                     class="
-                        mt-6
+                        h-[400px]
+                        flex
+                        items-center
+                        justify-center
+                        text-sm
+                        text-[#8a8a8a]
+                        border
+                        border-dashed
+                        border-[#e8e8e5]
+                        rounded-2xl
                     "
                 >
 
-                    <div
-                        x-ref="compositionChart"
-                        style="height:260px;"
-                    ></div>
+                    No purchase data available for
+                    the selected period.
 
                 </div>
 
@@ -879,13 +678,9 @@ function transactionReport()
 
         purchaseTrend:
             @json($purchaseTrend),
-            
-        composition: [],
-        pieChart: null,
 
         availableMonths:
             @json($availableMonths),
-
 
         filters: {
 
@@ -901,8 +696,9 @@ function transactionReport()
 
         debounceTimer: null,
         loading: false,
-
+        chartLoading: false,
         chartRequestId: 0,
+        currentPageUrl: null,
 
         resetFilters()
         {
@@ -917,8 +713,6 @@ function transactionReport()
             this.fetchData();
 
             this.fetchChart();
-
-            this.fetchComposition();
 
             history.replaceState(
                 {},
@@ -938,8 +732,6 @@ function transactionReport()
             this.fetchData();
 
             this.fetchChart();
-
-            this.fetchComposition();
         },
 
         handleMonthChange()
@@ -947,8 +739,6 @@ function transactionReport()
             this.fetchData();
 
             this.fetchChart();
-
-            this.fetchComposition();
         },
 
         get chartType()
@@ -1007,287 +797,9 @@ function transactionReport()
             return this.purchaseTrend.length > 0;
         },
 
-        get highestPurchase()
-        {
-            if (
-                !this.purchaseTrend.length
-            ) {
-
-                return {
-                    label: '-',
-                    total: 0,
-                };
-
-            }
-
-            return this.purchaseTrend.reduce(
-                (max, current) =>
-                    Number(
-                        current.total ?? 0
-                    ) >
-                    Number(
-                        max.total ?? 0
-                    )
-                        ? current
-                        : max
-            );
-        },
-
-        get averagePurchase()
-        {
-            if (
-                !this.purchaseTrend.length
-            ) {
-                return 0;
-            }
-
-            const total =
-                this.purchaseTrend.reduce(
-                    (sum, item) =>
-                        sum +
-                        Number(
-                            item.total ?? 0
-                        ),
-                    0
-                );
-
-            return Math.round(
-                total /
-                this.purchaseTrend.length
-            );
-        },
-
-        get totalPeriods()
-        {
-            return this.purchaseTrend.length;
-        },
-
-        get periodLabel()
-        {
-            if (this.filters.month) {
-                return 'Days';
-            }
-
-            if (this.filters.year) {
-                return 'Months';
-            }
-
-            return 'Years';
-        },
-
-        formatCurrency(value)
-        {
-            return 'Rp ' +
-                Number(value)
-                    .toLocaleString(
-                        'id-ID'
-                    );
-        },
-
-        buildChartOptions()
-        {
-            return {
-
-                chart: {
-
-                    type: this.chartType,
-
-                    height: 400,
-
-                    toolbar: {
-                        show: false
-                    },
-
-                    animations: {
-
-                        enabled: true,
-
-                        easing: 'easeinout',
-
-                        speed: 900,
-
-                        animateGradually: {
-
-                            enabled: true,
-
-                            delay: 80
-
-                        },
-
-                        dynamicAnimation: {
-
-                            enabled: true,
-
-                            speed: 700
-
-                        }
-
-                    }
-
-                },
-
-                grid: {
-                    padding: {
-                        right: 20
-                    }
-                },
-
-                stroke: {
-                    curve: 'smooth'
-                },
-
-                plotOptions: {
-
-                    bar: {
-
-                        borderRadius: 8,
-
-                        borderRadiusApplication: 'end',
-
-                        borderRadiusWhenStacked: 'last',
-
-                        columnWidth:
-                            this.purchaseTrend.length <= 1
-                                ? '8%'
-                                : this.purchaseTrend.length <= 3
-                                    ? '20%'
-                                    : '55%'
-
-                    }
-
-                },
-
-                dataLabels: {
-
-                    enabled: !this.filters.month,
-
-                    offsetY: -10,
-
-                    style: {
-
-                        fontSize: '11px',
-
-                        fontWeight: 600,
-
-                    },
-
-                    formatter: function(value)
-                    {
-                        if (value >= 1000000) {
-
-                            return 'Rp ' +
-                                (
-                                    value / 1000000
-                                ).toFixed(1) + 'M';
-
-                        }
-
-                        if (value >= 1000) {
-
-                            return 'Rp ' +
-                                (
-                                    value / 1000
-                                ).toFixed(0) + 'K';
-
-                        }
-
-                        return 'Rp ' + value;
-                    }
-
-                },
-
-                series: [
-                    {
-                        name: 'Purchase Value',
-
-                        data:
-                            this.purchaseTrend.map(
-                                item =>
-                                    Number(item.total)
-                            )
-                    }
-                ],
-
-                xaxis: {
-
-                    categories:
-                        this.purchaseTrend.map(
-                            item =>
-                                item.label
-                        )
-
-                },
-
-                tooltip: {
-
-                    y: {
-
-                        formatter: function(value)
-                        {
-
-                            return 'Rp ' +
-                                Number(value)
-                                    .toLocaleString(
-                                        'id-ID'
-                                    );
-
-                        }
-
-                    }
-
-                },
-
-                yaxis: {
-
-                    min: 0,
-
-                    forceNiceScale: true,
-
-                    title: {
-
-                        text:
-                            'Purchase Value (Rp)'
-
-                    },
-
-                    labels: {
-
-                        formatter: function(value)
-                        {
-
-                            if (
-                                value >= 1000000
-                            ) {
-
-                                return (
-                                    value / 1000000
-                                ).toFixed(1) + 'M';
-
-                            }
-
-                            if (
-                                value >= 1000
-                            ) {
-
-                                return (
-                                    value / 1000
-                                ).toFixed(0) + 'K';
-
-                            }
-
-                            return String(value);
-
-                        }
-
-                    }
-
-                }
-
-            };
-        },
-
         renderChart()
         {
+
             const container =
                 this.$refs.purchaseTrendChart;
 
@@ -1313,65 +825,16 @@ function transactionReport()
             }
 
             this.chart =
-                new ApexCharts(
-                    container,
-                    this.buildChartOptions()
-                );
-
-            requestAnimationFrame(() => {
-
-                requestAnimationFrame(() => {
-
-                    this.chart.render();
-
-                });
-
-            });
-
-        },
-
-        renderPieChart()
-        {
-            const container =
-                this.$refs.compositionChart;
-
-            if (!container) {
-                return;
-            }
-
-            if (
-                container.offsetWidth === 0
-            ) {
-
-                requestAnimationFrame(() => {
-
-                    this.renderPieChart();
-
-                });
-
-                return;
-
-            }
-
-            if (this.pieChart) {
-
-                this.pieChart.destroy();
-
-                this.pieChart = null;
-
-            }
-
-            this.pieChart =
-            
-                new ApexCharts(
+                new window.ApexCharts(
                     container,
                     {
-
                         chart: {
+                            type: this.chartType,
+                            height: 350,
 
-                            type: 'donut',
-
-                            height: 260,
+                            toolbar: {
+                                show: false
+                            },
 
                             animations: {
 
@@ -1379,13 +842,13 @@ function transactionReport()
 
                                 easing: 'easeinout',
 
-                                speed: 800,
+                                speed: 700,
 
                                 animateGradually: {
 
                                     enabled: true,
 
-                                    delay: 100
+                                    delay: 120
 
                                 },
 
@@ -1393,21 +856,83 @@ function transactionReport()
 
                                     enabled: true,
 
-                                    speed: 600
+                                    speed: 500
 
                                 }
 
                             }
 
+                        },
+
+                        stroke: {
+                            curve: 'smooth'
                         },
 
                         plotOptions: {
 
-                            pie: {
+                            bar: {
 
-                                donut: {
+                                columnWidth:
+                                    this.purchaseTrend.length <= 1
+                                        ? '8%'
+                                        : this.purchaseTrend.length <= 3
+                                            ? '20%'
+                                            : '55%'
 
-                                    size: '75%'
+                            }
+
+                        },
+
+                        series: [
+                            {
+                                name: 'Purchase Value',
+                                data:
+                                    this.purchaseTrend.map(
+                                        item =>
+                                            Number(item.total)
+                                    )
+                            }
+                        ],
+
+                        dataLabels: {
+
+                            enabled: false,
+
+                            formatter: function(value)
+                            {
+
+                                return 'Rp ' +
+                                    Number(value)
+                                        .toLocaleString(
+                                            'id-ID'
+                                        );
+
+                            }
+
+                        },
+
+                        xaxis: {
+                            categories:
+                                this.purchaseTrend.map(
+                                    item =>
+                                        item.label
+                                )
+                        },
+
+                        tooltip: {
+
+                            theme: 'light',
+
+                            y: {
+
+                                formatter: function(value)
+                                {
+
+                                    return 'Rp ' +
+                                        Number(value)
+                                            .toLocaleString(
+                                                'id-ID'
+                                            );
 
                                 }
 
@@ -1415,74 +940,106 @@ function transactionReport()
 
                         },
 
-                        labels:
-                            this.composition.map(
-                                item =>
-                                    item.label
-                            ),
+                        yaxis: {
 
-                        series:
-                            this.composition.map(
-                                item =>
-                                    item.value
-                            ),
+                            title: {
 
-                        legend: {
+                                text:
+                                    'Purchase Value (Rp)'
 
-                            position: 'bottom'
+                            },
+
+                            labels: {
+
+                                formatter: function(value)
+                                {
+                                    if (value >= 1000000) {
+
+                                        return (
+                                            value / 1000000
+                                        ).toFixed(1) + 'M';
+
+                                    }
+
+                                    if (value >= 1000) {
+
+                                        return (
+                                            value / 1000
+                                        ).toFixed(0) + 'K';
+
+                                    }
+
+                                    return String(value);
+                                }
+
+                            }
 
                         },
-
-                        dataLabels: {
-
-                            enabled: false
-
-                        }
-
                     }
                 );
 
-            this.pieChart.render();
+            this.chart.render().then(() => {
+
+                setTimeout(() => {
+
+                    window.dispatchEvent(
+                        new Event('resize')
+                    );
+
+                }, 50);
+
+            });
         },
 
         updateChart()
         {
 
-            if (
-                !this.hasChartData
-            ) {
+            if (this.chart) {
 
-                if (this.chart) {
+                this.chart.destroy();
 
-                    this.chart.destroy();
+                this.chart = null;
 
-                    this.chart = null;
-
-                }
-
-                return;
             }
 
-            if (!this.chart) {
-
-                this.$nextTick(() => {
-
-                    this.renderChart();
-
-                });
+            if (!this.hasChartData) {
 
                 return;
+
             }
 
-            this.chart.updateOptions(
-                this.buildChartOptions(),
-                true,
-                true
-            );
+            this.$nextTick(() => {
+
+                this.renderChart();
+
+            });
         },
 
         init()
         {
+            // this.$watch(
+            //     'filters',
+            //     () => {
+
+            //         clearTimeout(
+            //             this.debounceTimer
+            //         );
+
+            //         this.debounceTimer =
+            //             setTimeout(
+            //                 () => {
+
+            //                     this.fetchData();
+
+            //                 },
+            //                 500
+            //             );
+
+            //     },
+            //     {
+            //         deep: true
+            //     }
+            // );
 
             this.$watch(
                 'filters.search',
@@ -1515,11 +1072,13 @@ function transactionReport()
             );
 
             this.$nextTick(() => {
-                
-                setTimeout(() => {
+
+                requestAnimationFrame(() => {
+
                     this.renderChart();
-                    this.fetchComposition();
-                }, 150);
+
+                });
+
             });
 
             this.paginationHandler = (event) => {
@@ -1603,6 +1162,8 @@ function transactionReport()
                 const requestId =
                     ++this.chartRequestId;
 
+                this.chartLoading = true;
+
                 const params =
                     new URLSearchParams();
 
@@ -1659,50 +1220,9 @@ function transactionReport()
 
                 console.error(error);
 
-            }
-        },
+            }finally {
 
-        async fetchComposition()
-        {
-            try {
-
-                const params =
-                    new URLSearchParams();
-
-                if (this.filters.year) {
-
-                    params.append(
-                        'year',
-                        this.filters.year
-                    );
-
-                }
-
-                if (this.filters.month) {
-
-                    params.append(
-                        'month',
-                        this.filters.month
-                    );
-
-                }
-
-                const response =
-                    await fetch(
-                        `{{ route('owner.reports.transactions.composition') }}?${params.toString()}`
-                    );
-
-                const data =
-                    await response.json();
-
-                this.composition =
-                    data.composition;
-
-                this.renderPieChart();
-
-            } catch (error) {
-
-                console.error(error);
+                this.chartLoading = false;
 
             }
         },
