@@ -77,6 +77,23 @@ Route::middleware('auth')->group(function () {
             [TransactionReportController::class, 'index']
         )->name('reports.transactions');
 
+        Route::get(
+            'reports/transactions/chart',
+            [TransactionReportController::class, 'chart']
+        )->name('reports.transactions.chart');
+
+        Route::get(
+            'reports/transactions/composition',
+            [TransactionReportController::class, 'composition']
+        )->name(
+            'reports.transactions.composition'
+        );
+
+        Route::get(
+            'reports/transactions/export',
+            [TransactionReportController::class, 'export']
+        )->name('reports.transactions.export');
+
     });
 
     
