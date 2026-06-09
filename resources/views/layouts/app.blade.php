@@ -228,10 +228,13 @@
                                 @include('layouts.sidebar.produksi')
 
                             @elseif(auth()->user()->role === 'armada')
-                            
-                            @endif
 
+                              @include('layouts.sidebar.armada')
+                        
+                            @endif
+                            
                         </nav>
+
 
                         <!-- ================= BOTTOM ================= -->
                         <div class="p-3 border-t border-white/10">
