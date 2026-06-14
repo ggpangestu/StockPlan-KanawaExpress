@@ -168,7 +168,15 @@
         </div>
 
         @if($production->status === 'processing')
-        <div x-data="{ wastes: [] }" class="card-custom mb-6 border-red-100 bg-[#fffafa] shadow-none">
+        @php
+        $stockLimits = $availableIngredients->mapWithKeys(function($rm) {
+             // Asumsi total stok fisik Anda:
+            $totalStok = $rm->opened_stock + ($rm->sealed_stock * $rm->conversion_value);
+            return [$rm->id => $totalStok];
+            })->toJson();
+        @endphp
+
+        <div x-data="{ wastes: [], stockLimits: {{ $stockLimits }} }" class="card-custom mb-6 border-red-100 bg-[#fffafa] shadow-none">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <div class="flex items-center gap-4">
                     <div class="soft-icon !w-12 !h-12 !rounded-xl !bg-red-100 !text-red-500">
@@ -186,23 +194,36 @@
 
             <div class="space-y-3 mt-6">
                 <template x-for="(waste, index) in wastes" :key="index">
-                    <div class="flex items-end gap-3 bg-white p-4 rounded-2xl border border-red-100 shadow-sm transition-all duration-200">
+                    <div class="flex items-start gap-3 bg-white p-4 rounded-2xl border border-red-100 shadow-sm transition-all duration-200">
                         <div class="flex-1">
                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pilih Bahan Baku</label>
                             <select :name="'wasted_materials['+index+'][id]'" x-model="waste.id" required class="w-full h-11 mt-1.5 border-gray-200 rounded-xl text-sm focus:border-red-400 focus:ring-0 bg-gray-50 font-medium text-[#2c1f16]">
                                 <option value="">-- Cari Bahan --</option>
                                 @foreach($availableIngredients as $rm)
-                                    <option value="{{ $rm->id }}">{{ $rm->name }} ({{ $rm->unit }})</option>
+                                    @php $stokFisik = $rm->opened_stock + ($rm->sealed_stock * $rm->conversion_value); @endphp
+                                    <option value="{{ $rm->id }}">{{ $rm->name }} (Sisa: {{ number_format($stokFisik, 1) }} {{ $rm->unit }})</option>
                                 @endforeach
                             </select>
                         </div>
                         
-                        <div class="w-28 sm:w-32">
+                        <div class="w-32">
                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Jml Tumpah</label>
-                            <input type="number" step="0.01" :name="'wasted_materials['+index+'][qty]'" x-model="waste.qty" required class="w-full h-11 mt-1.5 border-gray-200 rounded-xl text-sm focus:border-red-400 focus:ring-0 bg-gray-50 font-bold text-center text-[#2c1f16]">
+                            <input 
+                                type="number" 
+                                step="0.01" 
+                                min="0.01"
+                                :max="waste.id ? stockLimits[waste.id] : ''" 
+                                :name="'wasted_materials['+index+'][qty]'" 
+                                x-model="waste.qty" 
+                                required 
+                                class="w-full h-11 mt-1.5 border-gray-200 rounded-xl text-sm focus:border-red-400 focus:ring-0 bg-gray-50 font-bold text-center text-[#2c1f16]"
+                            >
+                            <p x-show="waste.id && Number(waste.qty) > stockLimits[waste.id]" class="text-[10px] text-red-600 font-bold mt-1 leading-tight">
+                                Lebih dari stok! (Max: <span x-text="stockLimits[waste.id]"></span>)
+                            </p>
                         </div>
 
-                        <button type="button" @click="wastes.splice(index, 1)" class="w-11 h-11 rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition shrink-0">
+                        <button type="button" @click="wastes.splice(index, 1)" class="w-11 h-11 mt-[22px] rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition shrink-0">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                         </button>
                     </div>
@@ -293,7 +314,13 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <button type="button" @click="isFinishModalOpen = false" class="flex-1 h-12 rounded-2xl border border-black/10 text-[#2c1f16] font-bold hover:bg-black/5 transition">Batal</button>
-                    <button type="submit" class="flex-1 h-12 rounded-2xl bg-[#2faa39] text-white font-bold hover:bg-[#289631] shadow-lg shadow-green-600/30 transition">Ya, Selesaikan</button>
+                    <button 
+                        type="submit" 
+                        :disabled="wastes.some(w => w.id && Number(w.qty) > stockLimits[w.id])"
+                        class="flex-1 h-12 rounded-2xl bg-[#2faa39] text-white font-bold hover:bg-[#289631] shadow-lg shadow-green-600/30 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#2faa39] disabled:shadow-none"
+                    >
+                        Ya, Selesaikan
+                    </button>
                 </div>
             </div>
         </div>

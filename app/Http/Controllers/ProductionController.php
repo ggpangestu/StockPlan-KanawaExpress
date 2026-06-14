@@ -90,6 +90,48 @@ class ProductionController extends Controller
             'wasted_materials' => 'nullable|array', // Menangkap array bahan tumpah
         ]);
 
+        // TAHAP VALIDASI - DILAKUKAN SEBELUM MEMOTONG STOK
+        $production->load('items.menu.ingredients');
+        $totalDeductions = [];
+
+        // 1. Kumpulkan semua kebutuhan stok (Resep Dasar)
+        foreach ($production->items as $item) {
+            foreach ($item->menu->ingredients as $ing) {
+                $qtyNeeded = $ing->pivot->quantity * $item->target_quantity;
+                
+                if (!isset($totalDeductions[$ing->id])) {
+                    $totalDeductions[$ing->id] = 0;
+                }
+                $totalDeductions[$ing->id] += $qtyNeeded;
+            }
+        }
+
+        // 2. Tambahkan dengan laporan bahan tumpah/terbuang (Jika ada)
+        if ($request->has('wasted_materials')) {
+            foreach ($request->wasted_materials as $waste) {
+                if (!empty($waste['id']) && !empty($waste['qty'])) {
+                    if (!isset($totalDeductions[$waste['id']])) {
+                        $totalDeductions[$waste['id']] = 0;
+                    }
+                    $totalDeductions[$waste['id']] += $waste['qty'];
+                }
+            }
+        }
+
+        // 3. VALIDASI FINAL: Cek ke database apakah stok fisik mencukupi
+        foreach ($totalDeductions as $rm_id => $totalNeeded) {
+            $rawMaterial = \App\Models\RawMaterial::find($rm_id);
+            if ($rawMaterial) {
+                $stokTersedia = $rawMaterial->opened_stock + ($rawMaterial->sealed_stock * $rawMaterial->conversion_value);
+                
+                if ($totalNeeded > $stokTersedia) {
+                    // TENDANG BALIK KE HALAMAN SEBELUMNYA! TRANSAKSI BATAL.
+                    return back()->with('error', "GAGAL! Total kebutuhan {$rawMaterial->name} ({$totalNeeded} {$rawMaterial->purchase_unit}) melebihi sisa stok gudang ({$stokTersedia} {$rawMaterial->purchase_unit}). Silakan hubungi Owner.");
+                }
+            }
+        }
+
+        // AKHIR TAHAP VALIDASI - JIKA LOLOS, BARU POTONG STOK DI DATABASE
         DB::transaction(function () use ($request, $production) {
             $production->update([
                 'status' => 'completed',
