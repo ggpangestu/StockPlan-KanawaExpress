@@ -179,16 +179,18 @@
         </a>
 
         <a
-            href="#"
+            href="{{ route('owner.reports.productions') }}"
 
-            class="flex items-center gap-2
-                px-3 py-2
-                rounded-lg
-                text-sm
-                text-white/70
-                hover:text-white
-                hover:bg-white/[0.06]
-                transition"
+            @class([
+                'flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition',
+
+                'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white'
+                    => request()->routeIs('owner.reports.productions'),
+
+                'hover:bg-white/[0.06] text-white/80'
+                    => !request()->routeIs('owner.reports.productions'),
+                    
+            ])
         >
 
             <span>

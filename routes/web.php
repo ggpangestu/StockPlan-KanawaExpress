@@ -12,6 +12,7 @@ use App\Http\Controllers\Owner\ArmadaSessionController as OwnerArmadaSessionCont
 use App\Http\Controllers\Owner\ProductionController as OwnerProductionController;
 use App\Http\Controllers\Owner\FinishedGoodController;
 use App\Http\Controllers\Owner\TransactionReportController;
+use App\Http\Controllers\Owner\ProductionReportController;
 use App\Http\Controllers\Produksi\ReturnCheckController;
 
 Route::get('/', function () {
@@ -70,7 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::get('armada-sessions/live', [OwnerArmadaSessionController::class, 'live'])->name('armada-sessions.live');
         Route::post('armada-sessions', [OwnerArmadaSessionController::class, 'store'])->name('armada-sessions.store');
 
-        // REPORTS
+        // REPORTS TRANSACTIONS
 
         Route::get(
             'reports/transactions',
@@ -93,6 +94,11 @@ Route::middleware('auth')->group(function () {
             'reports/transactions/export',
             [TransactionReportController::class, 'export']
         )->name('reports.transactions.export');
+
+        Route::get(
+            'reports/productions',
+            [ProductionReportController::class, 'index']
+        )->name('reports.productions');
 
     });
 
