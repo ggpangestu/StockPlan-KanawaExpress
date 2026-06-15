@@ -26,11 +26,27 @@
     .danger { background: #ffeaea; color: #e14b4b; }
 </style>
 
-<div class="main-content" x-data="{ isFinishModalOpen: false }">
+@php
+    // KITA PINDAHKAN LOGIKA STOK KE PALING ATAS DI SINI
+    $stockLimitsJson = '{}';
+    if(isset($availableIngredients)) {
+        $stockLimitsJson = $availableIngredients->mapWithKeys(function($rm) {
+            $totalStok = $rm->opened_stock + ($rm->sealed_stock * $rm->conversion_value);
+            return [$rm->id => $totalStok];
+        })->toJson();
+    }
+@endphp
+
+<div class="main-content" x-data="{ isFinishModalOpen: false, wastes: [], stockLimits: {{ $stockLimitsJson }} }">
 
     @if(session('success'))
         <div class="mb-6 rounded-2xl bg-green-100 border border-green-200 text-green-700 px-5 py-4 font-medium shadow-sm">
             {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="mb-6 rounded-2xl bg-red-100 border border-red-200 text-red-700 px-5 py-4 font-medium shadow-sm">
+            {{ session('error') }}
         </div>
     @endif
 
@@ -168,15 +184,7 @@
         </div>
 
         @if($production->status === 'processing')
-        @php
-        $stockLimits = $availableIngredients->mapWithKeys(function($rm) {
-             // Asumsi total stok fisik Anda:
-            $totalStok = $rm->opened_stock + ($rm->sealed_stock * $rm->conversion_value);
-            return [$rm->id => $totalStok];
-            })->toJson();
-        @endphp
-
-        <div x-data="{ wastes: [], stockLimits: {{ $stockLimits }} }" class="card-custom mb-6 border-red-100 bg-[#fffafa] shadow-none">
+        <div class="card-custom mb-6 border-red-100 bg-[#fffafa] shadow-none">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <div class="flex items-center gap-4">
                     <div class="soft-icon !w-12 !h-12 !rounded-xl !bg-red-100 !text-red-500">
