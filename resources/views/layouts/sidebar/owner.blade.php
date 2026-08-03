@@ -199,7 +199,7 @@
 
         </a>
 
-        <a
+        {{-- <a
             href="#"
 
             class="flex items-center gap-2
@@ -216,9 +216,9 @@
                 Finished Goods
             </span>
 
-        </a>
+        </a> --}}
 
-        <a
+        {{-- <a
             href="#"
 
             class="flex items-center gap-2
@@ -235,7 +235,7 @@
                 Finance
             </span>
 
-        </a>
+        </a> --}}
     </div>
 
 </div>
