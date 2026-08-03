@@ -269,7 +269,7 @@ class ProductionReportController extends Controller
             foreach ($completedProductions as $production) {
 
                 $week =
-                    ceil(
+                    (int) ceil(
                         $production
                             ->plan_date
                             ->day / 7
@@ -284,6 +284,12 @@ class ProductionReportController extends Controller
                     default => '29-31',
 
                 };
+
+                logger([
+                    'day'   => $production->plan_date->day,
+                    'week'  => $week,
+                    'label' => $label,
+                ]);
 
                 if (! isset($trendDetails[$label])) {
 

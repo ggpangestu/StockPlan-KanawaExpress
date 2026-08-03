@@ -540,7 +540,7 @@
                     </div>
 
                     <div class="text-xs font-medium tabular-nums text-[#8a8a8a]"
-                         x-text="toast.seconds + 's'">
+                        x-text="toast.seconds + 's'">
                     </div>
 
                 </div>
@@ -551,8 +551,8 @@
                         @click="$store.toastManager.undoToast(toast)"
                         :disabled="toast.processing"
                         class="inline-flex items-center justify-center h-10 px-4 rounded-2xl
-                               bg-[#2f2f2f] text-white text-sm font-medium
-                               hover:opacity-90 transition duration-200"
+                            bg-[#2f2f2f] text-white text-sm font-medium
+                            hover:opacity-90 transition duration-200"
                         :class="{ 'opacity-50 cursor-not-allowed hover:opacity-50': toast.processing }"
                     >
                         Undo
