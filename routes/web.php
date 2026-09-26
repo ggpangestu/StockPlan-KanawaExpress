@@ -127,7 +127,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:armada')
         ->group(function () {
 
-        Route::get('sessions', [ArmadaSessionController::class, 'index'])->name('sessions.index');
+        // Route::get('sessions', [ArmadaSessionController::class, 'index'])->name('sessions.index');
         Route::patch('sessions/{session}/sold', [ArmadaSessionController::class, 'updateSold'])->name('sessions.update-sold');
         Route::patch('sessions/{session}/finish', [ArmadaSessionController::class, 'finish'])->name('sessions.finish');
     });

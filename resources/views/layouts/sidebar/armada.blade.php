@@ -1,4 +1,4 @@
-<a href="{{ route('armada.sessions.index') }}"
+{{-- <a href="{{ route('armada.sessions.index') }}"
     @class([
         'flex items-center h-11 rounded-xl transition group',
         'bg-white/[0.08] backdrop-blur-sm shadow-lg text-white' => request()->routeIs('armada.sessions.*'),
@@ -14,4 +14,4 @@
         Sesi Armada
     </span>
     
-</a>
+</a> --}}
