@@ -148,8 +148,11 @@ Alpine.store('toastManager', {
 
         this.toasts.push(toast);
 
-        this.startToastTimer(toastId);
+        requestAnimationFrame(() => {
+            toast.show = true;
+        });
 
+        this.startToastTimer(toastId);
     },
 
     addSuccessToast(title, message)

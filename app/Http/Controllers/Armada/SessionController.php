@@ -47,7 +47,11 @@ class SessionController extends Controller
 
         $this->saveSoldQuantities($session, $validated['sold']);
 
-        return back()->with('success', 'Sold quantities updated.');
+        return back()->with('toast', [
+            'type' => 'success',
+            'title' => 'Sales Saved',
+            'message' => 'Sold quantities have been updated.',
+        ]);
     }
 
     public function finish(Request $request, ArmadaSession $session): RedirectResponse
@@ -90,12 +94,18 @@ class SessionController extends Controller
         });
 
         return redirect()
-            ->route('armada.sessions.index')
-            ->with('success', 'Session finished. Unsold products were sent to Produksi for checking.');
+            ->route('dashboard')
+            ->with('toast', [
+                'type' => 'success',
+                'title' => 'Session Finished',
+                'message' => 'Session finished. Unsold products were sent to Produksi for checking.',
+            ]);
     }
 
-    private function saveSoldQuantities(ArmadaSession $session, array $soldQuantities): void
-    {
+    private function saveSoldQuantities(
+        ArmadaSession $session,
+        array $soldQuantities
+    ): void {
         $session->load('items');
 
         foreach ($session->items as $item) {
@@ -103,7 +113,8 @@ class SessionController extends Controller
 
             if ($soldQuantity > $item->quantity_sent) {
                 throw ValidationException::withMessages([
-                    "sold.{$item->id}" => 'Sold quantity cannot be greater than sent quantity.',
+                    "sold.{$item->id}" =>
+                        'Sold quantity cannot be greater than sent quantity.',
                 ]);
             }
 

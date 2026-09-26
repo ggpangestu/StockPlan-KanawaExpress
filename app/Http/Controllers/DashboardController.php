@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\Production;
 use App\Models\ProductionItem;
 use App\Models\RawMaterial;
+use App\Models\ArmadaSession;
 
 class DashboardController extends Controller
 {
@@ -15,9 +16,34 @@ class DashboardController extends Controller
         return match (Auth::user()->role) {
             'owner' => view('dashboard.owner'),
             'produksi' => $this->produksiDashboard(),
-            'armada' => view('dashboard.armada'),
+            'armada' => $this->armadaDashboard(),
             default => abort(403),
         };
+    }
+
+    private function armadaDashboard()
+    {
+        $activeSession = ArmadaSession::with([
+            'items.finishedGood.menu'
+        ])
+            ->where('armada_user_id', Auth::id())
+            ->where('status', ArmadaSession::STATUS_ACTIVE)
+            ->latest()
+            ->first();
+
+        $recentSessions = ArmadaSession::with([
+            'items.finishedGood.menu'
+        ])
+            ->where('armada_user_id', Auth::id())
+            ->where('status', ArmadaSession::STATUS_FINISHED)
+            ->latest('finished_at')
+            ->take(8)
+            ->get();
+
+        return view('dashboard.armada', compact(
+            'activeSession',
+            'recentSessions'
+        ));
     }
 
 
