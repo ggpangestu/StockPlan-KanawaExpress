@@ -3,358 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - {{ config('app.name') }}</title>
+    <meta name="theme-color" content="#f5f5f2">
+
+    <title>Sign in — StockPlan · Kanawa Express</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        input[type="password"]::-ms-reveal {
+            display: none;
+        }
+    </style>
 </head>
 
-<body class="min-h-screen bg-black text-white overflow-x-hidden">
-    @php
-        $lockSeconds = null;
+<body class="min-h-screen overflow-x-hidden bg-[#f5f5f2] text-[#181818] antialiased">
 
-            if ($errors->has('username')) {
-                preg_match('/([0-9]+)\sseconds/', $errors->first('username'), $matches);
+    <div class="grid min-h-dvh lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
 
-                if (isset($matches[1])) {
-                    $lockSeconds = (int) $matches[1];
-                }
-            }
-    @endphp
-
-    <!-- BACKGROUND -->
-    <div class="fixed inset-0">
-        <img 
-            src="{{ asset('images/bg_login.webp') }}"
-            alt="Background"
-            class="w-full h-full object-cover"
+        {{-- =========================================================
+             DESKTOP BRAND PANEL
+        ========================================================== --}}
+        <section
+            aria-label="Kanawa Express"
+            class="relative hidden flex-col justify-between border-r border-[#deded9] bg-[#f5f5f2] px-10 py-8 lg:flex xl:px-16 xl:py-10"
         >
 
-        <!-- DARK OVERLAY -->
-        <div class="absolute inset-0 bg-black/50"></div>
+            {{-- TOP META --}}
+            <div class="flex items-center justify-between text-[11px] font-medium uppercase tracking-[0.2em] text-[#777772]">
+                <span>StockPlan</span>
+                <span>Operations System</span>
+            </div>
 
-        <!-- SOFT GLOW -->
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(202,158,118,0.18),transparent_35%)]"></div>
-    </div>
 
-    <!-- MAIN -->
-    <div class="relative z-10 min-h-screen flex items-center">
+            {{-- BRAND / HERO --}}
+            <div class="mx-auto flex w-full max-w-[620px] flex-1 flex-col justify-center">
 
-        <!-- DESKTOP -->
-        <div class="hidden lg:grid lg:grid-cols-2 w-full h-screen">
+                {{-- MOBILE UNIT VISUAL --}}
+                <div class="mx-auto mt-2 w-full max-w-[540px]">
+                    <div class="relative h-[clamp(320px,44vh,440px)] w-full">
+                        <img
+                            src="{{ asset('images/design_sticker_payung_kanawa_express_bg.png') }}"
+                            alt="Kanawa Express mobile unit visual"
+                            class="absolute inset-0 h-full w-full object-contain object-center mix-blend-multiply"
+                        >
+                    </div>
+                </div>
 
-            <!-- LEFT SIDE -->
-            <div class="flex flex-col items-center justify-center px-10 xl:px-20 2xl:px-32">
 
-                <!-- LOGO -->
-                <img 
-                    src="{{ asset('images/logo_putih.png') }}"
-                    alt="Logo"
-                    class="w-[260px] xl:w-[340px] 2xl:w-[420px] max-w-full"
-                >
+                {{-- BRAND MESSAGE --}}
+                <div class="mt-32 flex items-end justify-between gap-8">
+                    <div>
+                        <p class="text-4xl font-medium tracking-tight text-[#181818] xl:text-5xl">
+                            Built to move.
+                        </p>
 
-                <!-- TAGLINE -->
-                <div class="mt-6 max-w-md text-center">
-                    <h2 class="text-base xl:text-lg 2xl:text-xl leading-relaxed text-[#CC9D7E]">
-                        Inventory management made simple.
-                    </h2>
-
-                    <p class="text-base xl:text-lg 2xl:text-xl text-[#CC9D7E] leading-relaxed">
-                        More time for what matters.
-                    </p>
+                        <p class="mt-3 max-w-sm text-sm leading-relaxed text-[#6f6f6a]">
+                            Stock, units, and daily operations for every Kanawa Express mobile outlet.
+                        </p>
+                    </div>
                 </div>
 
             </div>
 
-            <!-- RIGHT SIDE -->
-            <div class="flex items-center justify-center px-10">
+        </section>
 
-                <!-- LOGIN CARD -->
-                <div class="w-full max-w-[480px] rounded-[32px]
-                            border border-[#473E37]
-                            bg-[#16130F]/95
-                            backdrop-blur-xl
-                            p-10 shadow-2xl
-                            transition-all duration-300">
 
-                    <!-- TITLE -->
-                    <div class="text-center">
-                        <h1 class="text-4xl mt-6 text-[#ffffff]">
-                            Welcome Back
+        {{-- =========================================================
+             LOGIN PANEL
+        ========================================================== --}}
+        <main class="flex min-h-dvh flex-col px-5 py-8 sm:px-8 lg:px-12 lg:py-10">
+
+            <div class="mx-auto flex w-full max-w-[420px] flex-1 flex-col justify-center">
+
+                {{-- MOBILE LOGO --}}
+                <div class="mb-8 lg:hidden">
+                    <div class="mx-auto w-full max-w-[280px]">
+                        <img
+                            src="{{ asset('images/logo.png') }}"
+                            alt="Kanawa Express"
+                            class="block h-auto w-full"
+                        >
+                    </div>
+                </div>
+
+
+                {{-- LOGIN CARD --}}
+                <div class="rounded-[24px] border border-[#deded9] bg-white p-6 shadow-[0_1px_2px_rgba(24,24,24,0.04),0_16px_40px_-18px_rgba(24,24,24,0.14)] sm:p-9">
+
+                    {{-- HEADER --}}
+                    <header class="mb-7">
+                        <h1 class="text-2xl font-semibold tracking-tight text-[#181818] sm:text-[28px]">
+                            Welcome back
                         </h1>
 
-                        <p class="mt-2 text-base text-[#CC9D7E]/70 leading-relaxed">
-                            Sign in to continue to your inventory management dashboard.
+                        <p class="mt-2 text-sm leading-relaxed text-[#6f6f6a]">
+                            Sign in to continue your daily operation.
                         </p>
-                    </div>
+                    </header>
 
-                    <!-- SESSION STATUS -->
-                    <x-auth-session-status 
-                        class="mt-6 text-sm text-center text-green-400" 
-                        :status="session('status')" 
+
+                    {{-- SESSION STATUS --}}
+                    <x-auth-session-status
+                        class="mb-5 text-sm font-medium text-emerald-700"
+                        :status="session('status')"
                     />
 
-                    @if ($lockSeconds)
 
-                        <div
-                            x-data="{
-                                show:true,
-                                seconds: {{ $lockSeconds }},
-
-                                startCountdown() {
-
-                                    const timer = setInterval(() => {
-
-                                        if (this.seconds > 1) {
-
-                                            this.seconds--;
-
-                                        } else {
-
-                                            this.seconds = 0;
-                                            this.show = false;
-
-                                            clearInterval(timer);
-
-                                        }
-
-                                    }, 1000);
-                                }
-                            }"
-                            x-init="startCountdown()"
-                            x-show="show"
-                            x-transition.opacity.duration.400ms
-                            class="mt-6 rounded-2xl
-                                border border-amber-500/20
-                                bg-amber-500/10
-                                px-5 py-4"
-                        >
-
+                    {{-- LOGIN ERROR --}}
+                    @if ($errors->any() && !$lockSeconds)
+                        <div class="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
                             <div class="flex items-start gap-3">
 
-                                <!-- ICON -->
-                                <div class="text-amber-300 mt-[2px]">
-                                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
-                                </div>
+                                <i
+                                    data-lucide="circle-alert"
+                                    class="mt-0.5 size-5 shrink-0 text-red-600"
+                                    aria-hidden="true"
+                                ></i>
 
-                                <!-- CONTENT -->
-                                <div>
-
-                                    <p class="text-sm font-medium text-amber-200">
-                                        Too many login attempts
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm font-medium text-red-800">
+                                        Login failed
                                     </p>
 
-                                    <p class="mt-1 text-sm text-amber-100/80">
-                                        Please wait
-                                        <span
-                                            x-text="seconds"
-                                            class="font-semibold text-amber-200"
-                                        ></span>
-                                        seconds before trying again.
+                                    <p class="mt-1 text-sm leading-relaxed text-red-700">
+                                        {{ $errors->first() }}
                                     </p>
-
                                 </div>
 
                             </div>
-
                         </div>
-
                     @endif
 
-                    <!-- FORM -->
-                    <form method="POST"
-                        action="{{ route('login') }}"
-                        class="mt-10 space-y-6"
-                        x-data="{ loading:false }"
-                        @submit="loading = true">
 
+                    {{-- FORM --}}
+                    <form
+                        method="POST"
+                        action="{{ route('login') }}"
+                        class="flex flex-col gap-5"
+                        x-data="{
+                            loading: false,
+                            showPassword: false,
+                            locked: @js($lockSeconds > 0),
+                            seconds: @js((int) $lockSeconds),
+                            timer: null,
+
+                            init() {
+                                if (!this.locked || this.seconds <= 0) {
+                                    return;
+                                }
+
+                                this.timer = setInterval(() => {
+                                    if (this.seconds > 1) {
+                                        this.seconds--;
+                                        return;
+                                    }
+
+                                    this.seconds = 0;
+                                    this.locked = false;
+
+                                    clearInterval(this.timer);
+                                    this.timer = null;
+                                }, 1000);
+                            }
+                        }"
+                        @submit="
+                            if (locked) {
+                                $event.preventDefault();
+                                return;
+                            }
+
+                            loading = true;
+                        "
+                    >
                         @csrf
 
-                        <!-- USERNAME -->
-                        <div>
 
-                            <label class="block mb-3 text-sm text-[#F5EEE6]">
+                        {{-- USERNAME --}}
+                        <div class="flex flex-col gap-2">
+                            <label
+                                for="username"
+                                class="text-sm font-medium text-[#181818]"
+                            >
                                 Username
                             </label>
 
-                            <div class="relative group">
+                            <div class="group relative">
 
-                                <!-- ICON -->
-                                <div class="absolute inset-y-0 left-0
-                                    flex items-center justify-center
-                                    w-14 text-[#6B625B]
-                                    transition-colors duration-200
-                                    group-focus-within:text-[#CA9E76]">
-
-                                    <i data-lucide="user" class="w-5 h-5"></i>
-
-                                </div>
+                                <i
+                                    data-lucide="user-round"
+                                    class="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[#85857f] transition-colors group-focus-within:text-[#181818]"
+                                    aria-hidden="true"
+                                ></i>
 
                                 <input
-                                    type="text"
+                                    id="username"
                                     name="username"
+                                    type="text"
                                     value="{{ old('username') }}"
                                     required
                                     autofocus
+                                    autocomplete="username"
+                                    autocapitalize="none"
+                                    spellcheck="false"
                                     placeholder="Enter your username"
-                                    class="w-full h-14 rounded-2xl
-                                        border border-[#473E37]
-                                        hover:border-[#5A4E45]
-                                        bg-[#1B1713]
-                                        pl-14 pr-5 text-[#F5EEE6]
-                                        placeholder:text-[#6B625B]
-                                        focus:outline-none
-                                        focus:border-[#CA9E76]
-                                        focus:ring-2 focus:ring-[#CA9E76]/20
-                                        transition"
+                                    class="h-12 w-full rounded-xl border border-[#d9d9d4] bg-white pl-11 pr-4 text-[15px] text-[#181818] outline-none transition-[border-color,box-shadow] placeholder:text-[#999993] hover:border-[#c6c6c0] focus:border-[#181818] focus:ring-4 focus:ring-[#181818]/[0.06]"
                                 >
 
                             </div>
-
-                            @if ($errors->has('username') && !$lockSeconds)
-
-                                <div
-                                    x-data="{ show:true }"
-                                    x-show="show"
-                                    x-transition.opacity.duration.300ms
-                                    class="mt-3 flex items-start gap-3 rounded-2xl
-                                        border border-red-500/20
-                                        bg-red-500/10
-                                        px-4 py-3"
-                                >
-
-                                    <!-- ICON -->
-                                    <div class="mt-[2px] text-red-400">
-                                        <i data-lucide="circle-alert" class="w-5 h-5"></i>
-                                    </div>
-
-                                    <!-- TEXT -->
-                                    <div class="flex-1">
-
-                                        <p class="text-sm font-medium text-red-300">
-                                            Login Failed
-                                        </p>
-
-                                        <p class="mt-1 text-sm text-red-200/80">
-                                            {{ $errors->first('username') }}
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            @endif
-
                         </div>
 
-                        <!-- PASSWORD -->
-                        <div
-                            x-data="{ show:false }"
-                            x-effect="$nextTick(() => createIcons({ icons }))"
-                        >
-                            <label class="block mb-3 text-sm text-[#F5EEE6]">
+
+                        {{-- PASSWORD --}}
+                        <div class="flex flex-col gap-2">
+                            <label
+                                for="password"
+                                class="text-sm font-medium text-[#181818]"
+                            >
                                 Password
                             </label>
 
-                            <div class="relative group">
+                            <div class="group relative">
 
-                                <!-- ICON -->
-                                <div class="absolute inset-y-0 left-0
-                                    flex items-center justify-center
-                                    w-14 text-[#6B625B]
-                                    transition-colors duration-200
-                                    group-focus-within:text-[#CA9E76]">
-
-                                    <i data-lucide="lock-keyhole" class="w-5 h-5"></i>
-
-                                </div>
+                                <i
+                                    data-lucide="lock-keyhole"
+                                    class="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[#85857f] transition-colors group-focus-within:text-[#181818]"
+                                    aria-hidden="true"
+                                ></i>
 
                                 <input
-                                    x-bind:type="show ? 'text' : 'password'"
+                                    id="password"
                                     name="password"
+                                    :type="showPassword ? 'text' : 'password'"
                                     required
+                                    autocomplete="current-password"
                                     placeholder="Enter your password"
-                                    class="w-full h-14 rounded-2xl
-                                        border border-[#473E37]
-                                        hover:border-[#5A4E45]
-                                        bg-[#1B1713]
-                                        pl-14 pr-14 text-[#F5EEE6]
-                                        placeholder:text-[#6B625B]
-                                        focus:outline-none
-                                        focus:border-[#CA9E76]
-                                        focus:ring-2 focus:ring-[#CA9E76]/20
-                                        transition"
+                                    class="h-12 w-full rounded-xl border border-[#d9d9d4] bg-white pl-11 pr-12 text-[15px] text-[#181818] outline-none transition-[border-color,box-shadow] placeholder:text-[#999993] hover:border-[#c6c6c0] focus:border-[#181818] focus:ring-4 focus:ring-[#181818]/[0.06]"
                                 >
 
-                                <!-- TOGGLE -->
                                 <button
                                     type="button"
-                                    @click="show = !show"
-                                    class="absolute inset-y-0 right-0
-                                        flex items-center justify-center
-                                        w-14 text-[#6B625B]
-                                        hover:text-[#CA9E76]
-                                        transition"
+                                    @click="showPassword = !showPassword"
+                                    :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                                    :aria-pressed="showPassword"
+                                    class="absolute right-2 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-[#85857f] transition-colors hover:bg-[#eeece8] hover:text-[#181818] focus:outline-none focus:ring-2 focus:ring-[#181818]/10"
                                 >
-
                                     <i
-                                        x-show="!show"
+                                        x-show="!showPassword"
                                         data-lucide="eye"
-                                        class="w-5 h-5 absolute"
+                                        class="size-[18px]"
+                                        aria-hidden="true"
                                     ></i>
 
                                     <i
-                                        x-show="show"
+                                        x-show="showPassword"
                                         data-lucide="eye-off"
-                                        class="w-5 h-5 absolute"
+                                        class="size-[18px]"
+                                        aria-hidden="true"
                                     ></i>
-
                                 </button>
+
                             </div>
-
                         </div>
 
-                        <!-- REMEMBER -->
-                        <div class="flex items-center justify-between">
 
-                            <label class="flex items-center gap-3 text-sm text-[#CC9D7E]/80">
-                                <input
-                                    type="checkbox"
-                                    name="remember"
-                                    class="rounded border-[#473E37]
-                                           bg-[#1B1713]
-                                           text-[#CA9E76]
-                                           focus:ring-[#CA9E76]"
-                                >
+                        {{-- REMEMBER ME --}}
+                        <label class="flex w-fit cursor-pointer select-none items-center gap-2.5 text-sm text-[#6f6f6a]">
+                            <input
+                                type="checkbox"
+                                name="remember"
+                                class="size-4 cursor-pointer rounded border-[#d2d2cd] accent-[#181818] focus:ring-[#181818]"
+                            >
 
-                                Remember me
-                            </label>
+                            Remember me
+                        </label>
 
-                        </div>
 
-                        <!-- BUTTON -->
+                        {{-- SUBMIT --}}
                         <button
                             type="submit"
-                            x-bind:disabled="loading"
-                            class="w-full h-14 rounded-2xl
-                                bg-[#CA9E76]
-                                text-[#16130F]
-                                font-semibold text-lg
-                                hover:brightness-110
-                                hover:shadow-lg
-                                active:scale-[0.99]
-                                transition-all duration-200 ease-out
-                                disabled:opacity-70
-                                disabled:cursor-not-allowed
-                                flex items-center justify-center gap-3"
+                            x-bind:disabled="loading || locked"
+                            class="group mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#181818] text-[15px] font-medium text-white transition-colors hover:bg-[#2a2a2a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#181818] disabled:cursor-not-allowed disabled:opacity-50"
                         >
 
-                            <!-- SPINNER -->
+                            {{-- LOADING SPINNER --}}
                             <svg
                                 x-show="loading"
-                                class="w-5 h-5 animate-spin"
+                                x-cloak
+                                class="size-4 animate-spin"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
+                                aria-hidden="true"
                             >
                                 <circle
                                     class="opacity-25"
@@ -368,368 +311,53 @@
                                 <path
                                     class="opacity-75"
                                     fill="currentColor"
-                                    d="M4 12a8 8 0 018-8v4
-                                    a4 4 0 00-4 4H4z"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                                 ></path>
                             </svg>
 
-                            <!-- TEXT -->
-                            <span x-text="loading ? 'Signing In...' : 'Sign In'"></span>
+
+                            {{-- BUTTON TEXT --}}
+                            <span
+                                x-text="
+                                    loading
+                                        ? 'Signing in…'
+                                        : locked
+                                            ? `Try again in ${seconds}s`
+                                            : 'Sign In'
+                                "
+                            ></span>
+
+
+                            {{-- ARROW --}}
+                            <i
+                                x-show="!loading && !locked"
+                                data-lucide="arrow-right"
+                                class="size-4 transition-transform group-hover:translate-x-0.5"
+                                aria-hidden="true"
+                            ></i>
 
                         </button>
 
                     </form>
 
-                    <div class="text-center">
-                        <div class="flex mt-10 items-center gap-3">
-    
-                            <div class="h-px flex-1 bg-[#473E37]"></div>
-
-                                <img 
-                                    src="{{ asset('icons/coffee-bean.svg') }}"
-                                    alt="Bean"
-                                    class="w-7 h-7 opacity-90"
-                                >
-
-                            <div class="h-px flex-1 bg-[#473E37]"></div>
-
-                        </div>
-
-                        <p class="mt-2 text-sm text-[#CC9D7E]/70 leading-relaxed">
-                            Good Coffee. Smart Inventory.
-                        </p>
-                    </div>
-
                 </div>
+
+
+                {{-- AUTHORIZATION NOTICE --}}
+                <p class="mt-6 text-center text-xs text-[#777772]">
+                    Authorized Kanawa Express personnel only.
+                </p>
 
             </div>
 
-        </div>
 
-        <!-- MOBILE -->
-        <div class="lg:hidden relative w-full min-h-screen overflow-y-auto flex items-center justify-center p-6">
+            {{-- FOOTER --}}
+            <footer class="mx-auto mt-8 flex w-full max-w-[420px] items-center justify-between text-xs text-[#85857f]">
+                <span>StockPlan</span>
+                <span>&copy; {{ date('Y') }} Kanawa Express</span>
+            </footer>
 
-            <!-- MOBILE OVERLAY -->
-            <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
-
-            <!-- CARD -->
-            <div class="relative z-10 w-full max-w-md my-6 rounded-[28px]
-                        border border-[#473E37]
-                        bg-[#16130F]/95
-                        backdrop-blur-xl
-                        p-7 shadow-2xl
-                        transition-all duration-300">
-
-                <!-- LOGO -->
-                <div class="flex justify-center">
-                    <img 
-                        src="{{ asset('images/logo_putih.png') }}"
-                        alt="Logo"
-                        class="w-36 sm:w-40"
-                    >
-                </div>
-
-                <!-- TITLE -->
-                <div class="mt-8 text-center">
-                    <h1 class="text-3xl font-semibold text-[#ffffff]">
-                        Welcome Back
-                    </h1>
-
-                    <p class="mt-3 text-sm text-[#CC9D7E]/70">
-                        Sign in to continue your dashboard.
-                    </p>
-                </div>
-
-                <!-- SESSION STATUS -->
-                <x-auth-session-status 
-                    class="mt-6 text-sm text-center text-green-400" 
-                    :status="session('status')" 
-                />
-
-                @if ($lockSeconds)
-
-                    <div
-                        x-data="{
-                            show:true,
-                            seconds: {{ $lockSeconds }},
-
-                            startCountdown() {
-
-                                const timer = setInterval(() => {
-
-                                    if (this.seconds > 1) {
-
-                                        this.seconds--;
-
-                                    } else {
-
-                                        this.seconds = 0;
-                                        this.show = false;
-
-                                        clearInterval(timer);
-
-                                    }
-
-                                }, 1000);
-                            }
-                        }"
-                        x-init="startCountdown()"
-                        x-show="show"
-                        x-transition.opacity.duration.400ms
-                            class="mt-6 rounded-2xl
-                            border border-amber-500/20
-                            bg-amber-500/10
-                            px-5 py-4"
-                    >
-
-                        <div class="flex items-start gap-3">
-
-                            <!-- ICON -->
-                            <div class="text-amber-300 mt-[2px]">
-                                <i data-lucide="shield-alert" class="w-5 h-5"></i>
-                            </div>
-
-                            <!-- CONTENT -->
-                            <div>
-
-                                <p class="text-sm font-medium text-amber-200">
-                                    Too many login attempts
-                                </p>
-
-                                <p class="mt-1 text-sm text-amber-100/80">
-                                    Please wait
-                                    <span
-                                        x-text="seconds"
-                                        class="font-semibold text-amber-200"
-                                    ></span>
-                                    seconds before trying again.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                @endif
-
-                <!-- FORM -->
-                <form method="POST"
-                    action="{{ route('login') }}"
-                    class="mt-8 space-y-5"
-                    x-data="{ loading:false }"
-                    @submit="loading = true">
-
-                    @csrf
-
-                    <!-- USERNAME -->
-                    <div>
-
-                        <label class="block mb-3 text-sm text-[#F5EEE6]">
-                            Username
-                        </label>
-
-                        <div class="relative group">
-
-                            <!-- ICON -->
-                            <div class="absolute inset-y-0 left-0
-                                flex items-center justify-center
-                                w-12 text-[#6B625B]
-                                transition-colors duration-200
-                                group-focus-within:text-[#CA9E76]">
-
-                                <i data-lucide="user" class="w-5 h-5"></i>
-
-                            </div>
-
-                            <input
-                                type="text"
-                                name="username"
-                                value="{{ old('username') }}"
-                                required
-                                autofocus
-                                placeholder="Enter your username"
-                                class="w-full h-14 rounded-2xl
-                                    border border-[#473E37]
-                                    hover:border-[#5A4E45]
-                                    bg-[#1B1713]
-                                    pl-14 pr-5 text-[#F5EEE6]
-                                    placeholder:text-[#6B625B]
-                                    focus:outline-none
-                                    focus:border-[#CA9E76]
-                                    focus:ring-2 focus:ring-[#CA9E76]/20
-                                    transition"
-                            >
-
-                        </div>
-
-                        @if ($errors->has('username') && !$lockSeconds)
-
-                            <div
-                                x-data="{ show:true }"
-                                x-show="show"
-                                x-transition.opacity.duration.300ms
-                                class="mt-3 flex items-start gap-3 rounded-2xl
-                                    border border-red-500/20
-                                    bg-red-500/10
-                                    px-4 py-3"
-                            >
-
-                                <!-- ICON -->
-                                <div class="mt-[2px] text-red-400">
-                                    <i data-lucide="circle-alert" class="w-5 h-5"></i>
-                                </div>
-
-                                <!-- TEXT -->
-                                <div class="flex-1">
-
-                                    <p class="text-sm font-medium text-red-300">
-                                        Login Failed
-                                    </p>
-
-                                    <p class="mt-1 text-sm text-red-200/80">
-                                        {{ $errors->first('username') }}
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                        @endif
-
-                    </div>
-
-                    <!-- PASSWORD -->
-                    <div
-                        x-data="{ show:false }"
-                        x-effect="$nextTick(() => createIcons({ icons }))"
-                    >
-
-                        <label class="block mb-2 text-sm text-[#F5EEE6]">
-                            Password
-                        </label>
-
-                        <div class="relative group">
-
-                        <div class="absolute inset-y-0 left-0
-                            flex items-center justify-center
-                            w-12 text-[#6B625B]
-                            transition-colors duration-200
-                            group-focus-within:text-[#CA9E76]">
-
-                            <i data-lucide="lock-keyhole" class="w-5 h-5"></i>
-
-                        </div>
-
-                        <input
-                            x-bind:type="show ? 'text' : 'password'"
-                            name="password"
-                            required
-                            placeholder="Enter your password"
-                            class="w-full h-12 rounded-xl
-                                border border-[#473E37]
-                                hover:border-[#5A4E45]
-                                bg-[#1B1713]
-                                pl-12 pr-12 text-[#F5EEE6]
-                                placeholder:text-[#6B625B]
-                                focus:outline-none
-                                focus:border-[#CA9E76]
-                                focus:ring-2 focus:ring-[#CA9E76]/20
-                                transition"
-                        >
-
-                            <!-- TOGGLE -->
-                            <button
-                                type="button"
-                                @click="show = !show"
-                                class="absolute inset-y-0 right-0
-                                    flex items-center justify-center
-                                    w-12 text-[#6B625B]
-                                    hover:text-[#CA9E76]
-                                    transition"
-                            >
-
-                                <i
-                                    x-show="!show"
-                                    data-lucide="eye"
-                                    class="w-5 h-5 absolute"
-                                ></i>
-
-                                <i
-                                    x-show="show"
-                                    data-lucide="eye-off"
-                                    class="w-5 h-5 absolute"
-                                ></i>
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <!-- REMEMBER -->
-                    <label class="flex items-center gap-3 text-sm text-[#CC9D7E]/80">
-                        <input
-                            type="checkbox"
-                            name="remember"
-                            class="rounded border-[#473E37]
-                            bg-[#1B1713]
-                            text-[#CA9E76]"
-                        >Remember me
-                    </label>
-
-                    <!-- BUTTON -->
-                    <button
-                        type="submit"
-                        x-bind:disabled="loading"
-                        class="w-full h-12 rounded-2xl
-                            bg-[#CA9E76]
-                            text-[#16130F]
-                            font-semibold text-lg
-                            hover:brightness-110
-                            hover:shadow-lg
-                            active:scale-[0.99]
-                            transition-all duration-200 ease-out
-                            disabled:opacity-70
-                            disabled:cursor-not-allowed
-                            flex items-center justify-center gap-3"
-                    >
-
-                    <!-- SPINNER -->
-                        <svg
-                            x-show="loading"
-                            class="w-5 h-5 animate-spin"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                        >
-                            <circle
-                                class="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                stroke-width="4"
-                            ></circle>
-
-                            <path
-                                class="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8v4
-                                a4 4 0 00-4 4H4z"
-                            ></path>
-                        </svg>
-
-                        <!-- TEXT -->
-                        <span x-text="loading ? 'Signing In...' : 'Sign In'"></span>
-
-                    </button>
-
-                </form>
-
-            </div>
-
-        </div>
+        </main>
 
     </div>
 
