@@ -72,9 +72,18 @@
 
             <!-- CONTENT -->
             <div
-                x-data="{
+                {{-- x-data="{
                     preview: '{{ $rawMaterial->image
                         ? asset('storage/' . $rawMaterial->image)
+                        : '' }}',
+
+                    imageError: '',
+                    fileName: '',
+                }" --}}
+
+                x-data="{
+                    preview: '{{ $rawMaterial->image
+                        ? Storage::disk('s3')->temporaryUrl($rawMaterial->image, now()->addMinutes(10))
                         : '' }}',
 
                     imageError: '',
