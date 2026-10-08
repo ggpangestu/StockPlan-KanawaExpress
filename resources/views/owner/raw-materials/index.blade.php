@@ -554,7 +554,7 @@
                                 @if($material->image)
 
                                     <img
-                                        src="{{ Storage::disk('s3')->url($material->image) }}"
+                                        src="{{ Storage::disk('s3')->temporaryUrl($material->image, now()->addMinutes(10)) }}"
                                         alt="{{ $material->name }}"
                                         class="w-10 h-10 lg:w-11 lg:h-11 xl:w-12 xl:h-12 rounded-2xl object-cover border border-[#e8e8e5]"
                                     >
