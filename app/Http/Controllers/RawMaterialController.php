@@ -172,11 +172,16 @@ class RawMaterialController extends Controller
         */
         if ($request->hasFile('image')) {
                 
-            $validated['image'] = $request 
+            // $validated['image'] = $request 
+            //     ->file('image')
+            //     ->store('raw-materials', 'public');
+
+            $validated['image'] = $request
                 ->file('image')
-                ->store('raw-materials', 'public');
+                ->store('raw-materials', 's3');
                 
         }
+        
             
         /*
         |--------------------------------------------------------------------------
@@ -793,22 +798,32 @@ class RawMaterialController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        // if ($request->hasFile('image')) {
+
+        //     if ($rawMaterial->image) {
+
+        //         Storage::disk('public')->delete(
+        //             $rawMaterial->image
+        //         );
+
+        //     }
+
+        //     $validated['image'] =
+        //         $request->file('image')
+        //             ->store(
+        //                 'raw-materials',
+        //                 'public'
+        //             );
+        // }
+
         if ($request->hasFile('image')) {
 
             if ($rawMaterial->image) {
-
-                Storage::disk('public')->delete(
-                    $rawMaterial->image
-                );
-
+                Storage::disk('s3')->delete($rawMaterial->image);
             }
 
-            $validated['image'] =
-                $request->file('image')
-                    ->store(
-                        'raw-materials',
-                        'public'
-                    );
+            $validated['image'] = $request->file('image')
+                ->store('raw-materials', 's3');
         }
 
         /*

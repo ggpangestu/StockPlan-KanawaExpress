@@ -525,7 +525,7 @@
                         <!-- MATERIAL -->
                         <div class="flex items-center gap-4 min-w-0">
 
-                            <!-- IMAGE -->
+                            {{-- <!-- IMAGE -->
                             <div class="shrink-0">
 
                                 @if($material->image)
@@ -542,6 +542,29 @@
                                         class="w-10 h-10 lg:w-11 lg:h-11 xl:w-12 xl:h-12 rounded-2xl
                                             bg-[#f1f1ef]
                                             border border-[#e8e8e5]"
+                                    ></div>
+
+                                @endif
+
+                            </div> --}}
+
+                            <!-- IMAGE -->
+                            <div class="shrink-0">
+
+                                @if($material->image)
+
+                                    <img
+                                        src="{{ Storage::disk('s3')->url($material->image) }}"
+                                        alt="{{ $material->name }}"
+                                        class="w-10 h-10 lg:w-11 lg:h-11 xl:w-12 xl:h-12 rounded-2xl object-cover border border-[#e8e8e5]"
+                                    >
+
+                                @else
+
+                                    <div
+                                        class="w-10 h-10 lg:w-11 lg:h-11 xl:w-12 xl:h-12 rounded-2xl
+                                                bg-[#f1f1ef]
+                                                border border-[#e8e8e5]"
                                     ></div>
 
                                 @endif
